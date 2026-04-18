@@ -72,3 +72,149 @@ img {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+.news-content h2 {
+  margin: 20px 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+}
+
+.news-content h3 {
+  margin: 18px 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+.news-content p {
+  margin: 0 0 14px;
+  line-height: 1.8;
+}
+
+.news-content ul {
+  margin: 0 0 14px 22px;
+  padding: 0;
+}
+
+.news-content li {
+  margin-bottom: 8px;
+}
+
+.news-content img {
+  display: block;
+  max-width: 100%;
+  margin: 18px auto 8px;
+}
+
+.news-content figure {
+  margin: 18px 0;
+}
+
+.news-content figcaption {
+  margin-top: 8px;
+  text-align: center;
+  font-style: italic;
+  color: #444;
+}
+
+.news-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+}
+
+.news-content th,
+.news-content td {
+  border: 1px solid #9e9e9e;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.news-content th {
+  font-weight: 700;
+}
+.flight-post-content h2 {
+  margin: 20px 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+}
+
+.flight-post-content h3 {
+  margin: 18px 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+.flight-post-content p {
+  margin: 0 0 14px;
+  line-height: 1.8;
+}
+
+.flight-post-content ul {
+  margin: 0 0 14px 22px;
+  padding: 0;
+}
+
+.flight-post-content li {
+  margin-bottom: 8px;
+}
+
+.flight-post-content img {
+  display: block;
+  max-width: 100%;
+  margin: 18px auto 8px;
+}
+
+.flight-post-content figure {
+  margin: 18px 0;
+}
+
+.flight-post-content figcaption {
+  margin-top: 8px;
+  text-align: center;
+  font-style: italic;
+  color: #444;
+}
+
+.flight-post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+}
+
+.flight-post-content th,
+.flight-post-content td {
+  border: 1px solid #9e9e9e;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.flight-post-content th {
+  font-weight: 700;
+}
+.hotel-detail-html h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+}
+
+.hotel-detail-html p {
+  margin: 0 0 18px;
+}
+
+.hotel-detail-html ul {
+  margin: 0 0 18px;
+  padding-left: 20px;
+}
+
+.hotel-detail-html li {
+  margin-bottom: 8px;
+}
+
+.hotel-detail-html strong {
+  font-weight: 700;
+}
