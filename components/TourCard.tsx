@@ -28,7 +28,7 @@ function parseVietnameseDate(dateStr: string): Date | null {
 function formatCountdown(targetDate: Date | null): string | null {
   if (!targetDate) return null;
 
-  const now = new Date().getTime();
+  const now = Date.now();
   const distance = targetDate.getTime() - now;
 
   if (distance <= 0) return null;
@@ -56,9 +56,10 @@ export default function TourCard({ tour }: TourCardProps) {
     };
 
     updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
 
-    return () => clearInterval(timer);
+    const timer = window.setInterval(updateCountdown, 1000);
+
+    return () => window.clearInterval(timer);
   }, [targetDate]);
 
   return (
