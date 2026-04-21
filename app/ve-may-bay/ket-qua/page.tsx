@@ -1,22 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import HeaderTop from "@/components/HeaderTop";
 import MainHeader from "@/components/MainHeader";
 import FloatingContact from "@/components/FloatingContact";
 import Footer from "@/components/Footer";
 
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
   Armchair,
-  CalendarDays,
   ChevronDown,
   ChevronUp,
   Search,
@@ -64,7 +58,12 @@ const passengerOptions = [
   "2 Người lớn, 2 Trẻ em, 0 Em bé",
 ];
 
-const cabinOptions = ["Tất cả", "Phổ thông", "Phổ thông đặc biệt", "Thương gia"];
+const cabinOptions = [
+  "Tất cả",
+  "Phổ thông",
+  "Phổ thông đặc biệt",
+  "Thương gia",
+];
 
 const airportOptions = [
   { code: "SGN", label: "Hồ Chí Minh (SGN)" },
@@ -76,7 +75,6 @@ const airportOptions = [
   { code: "BMV", label: "Buôn Ma Thuột (BMV)" },
   { code: "VII", label: "Vinh (VII)" },
 ];
-
 
 function formatPrice(price: number) {
   return `${price.toLocaleString("vi-VN")} ₫`;
@@ -282,17 +280,15 @@ function getFarePackages(item: FlightItem): FarePackage[] {
   ];
 }
 
-export default function FlightSearchResultPage() {
-  const [openFareDetailKey, setOpenFareDetailKey] = useState<string | null>(null);
+function FlightSearchResultContent() {
+  const [openFareDetailKey, setOpenFareDetailKey] = useState<string | null>(
+    null
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const initialFrom = searchParams.get("from") || "Hồ Chí Minh (SGN)";
   const initialTo = searchParams.get("to") || "Hà Nội (HAN)";
-  const initialFromCode =
-    searchParams.get("fromCode") || extractAirportCode(initialFrom);
-  const initialToCode =
-    searchParams.get("toCode") || extractAirportCode(initialTo);
   const initialDate = searchParams.get("departDate") || "2026-04-19";
   const initialTripType =
     (searchParams.get("tripType") as "oneway" | "roundtrip") || "oneway";
@@ -316,25 +312,25 @@ export default function FlightSearchResultPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [maxVisible, setMaxVisible] = useState(12);
   const [fromOpen, setFromOpen] = useState(false);
-const [toOpen, setToOpen] = useState(false);
+  const [toOpen, setToOpen] = useState(false);
 
-const [fromKeyword, setFromKeyword] = useState(from);
-const [toKeyword, setToKeyword] = useState(to);
+  const [fromKeyword, setFromKeyword] = useState(from);
+  const [toKeyword, setToKeyword] = useState(to);
 
-const filteredFromAirports = airportOptions.filter((item) =>
-  item.label.toLowerCase().includes(fromKeyword.toLowerCase())
-);
+  const filteredFromAirports = airportOptions.filter((item) =>
+    item.label.toLowerCase().includes(fromKeyword.toLowerCase())
+  );
 
-const filteredToAirports = airportOptions.filter((item) =>
-  item.label.toLowerCase().includes(toKeyword.toLowerCase())
-);
+  const filteredToAirports = airportOptions.filter((item) =>
+    item.label.toLowerCase().includes(toKeyword.toLowerCase())
+  );
 
-const swapAirports = () => {
-  setFrom(to);
-  setTo(from);
-  setFromKeyword(to);
-  setToKeyword(from);
-};
+  const swapAirports = () => {
+    setFrom(to);
+    setTo(from);
+    setFromKeyword(to);
+    setToKeyword(from);
+  };
 
   const [stopFilters, setStopFilters] = useState({
     direct: false,
@@ -423,7 +419,10 @@ const swapAirports = () => {
     const grouped = new Map<string, number>();
 
     allRouteFlights.forEach((item) => {
-      if (!grouped.has(item.departDate) || item.price < (grouped.get(item.departDate) || 0)) {
+      if (
+        !grouped.has(item.departDate) ||
+        item.price < (grouped.get(item.departDate) || 0)
+      ) {
         grouped.set(item.departDate, item.price);
       }
     });
@@ -648,8 +647,12 @@ const swapAirports = () => {
                       Điều Kiện Hành Lý
                     </div>
                     <div className="space-y-2 text-[15px] leading-[1.6] text-[#555]">
-                      <div>🧳 Hành lý xách tay: <strong>{pkg.baggageCarry}</strong></div>
-                      <div>🧰 Hành lý ký gửi: <strong>{pkg.baggageChecked}</strong></div>
+                      <div>
+                        🧳 Hành lý xách tay: <strong>{pkg.baggageCarry}</strong>
+                      </div>
+                      <div>
+                        🧰 Hành lý ký gửi: <strong>{pkg.baggageChecked}</strong>
+                      </div>
                     </div>
                   </div>
 
@@ -665,87 +668,93 @@ const swapAirports = () => {
                   </div>
 
                   <div className="flex items-end justify-between border-t border-[#efefef] px-4 py-4">
-  <div>
-    <div className="text-[18px] font-bold text-[#ff5a52]">
-      {formatPrice(pkg.price)}
-    </div>
-    <div className="mt-1 text-[14px] text-[#9b9b9b]">
-      Giá đã bao gồm thuế phí
-    </div>
-  </div>
+                    <div>
+                      <div className="text-[18px] font-bold text-[#ff5a52]">
+                        {formatPrice(pkg.price)}
+                      </div>
+                      <div className="mt-1 text-[14px] text-[#9b9b9b]">
+                        Giá đã bao gồm thuế phí
+                      </div>
+                    </div>
 
-  <div className="flex items-center gap-4">
-   <div className="relative">
-  <button
-    type="button"
-    onClick={() =>
-      setOpenFareDetailKey(openFareDetailKey === `${item.id}-${pkg.name}` ? null : `${item.id}-${pkg.name}`)
-    }
-    className="text-[15px] font-medium text-[#1677ff]"
-  >
-    Xem chi tiết
-  </button>
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenFareDetailKey(
+                              openFareDetailKey === `${item.id}-${pkg.name}`
+                                ? null
+                                : `${item.id}-${pkg.name}`
+                            )
+                          }
+                          className="text-[15px] font-medium text-[#1677ff]"
+                        >
+                          Xem chi tiết
+                        </button>
 
-  {openFareDetailKey === `${item.id}-${pkg.name}` && (
-    <div className="absolute bottom-[42px] right-0 z-30 w-[280px] rounded-[14px] bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
-      <button
-        type="button"
-        onClick={() => setOpenFareDetailKey(null)}
-        className="absolute right-3 top-2 text-[20px] leading-none text-[#999]"
-      >
-        ×
-      </button>
+                        {openFareDetailKey === `${item.id}-${pkg.name}` && (
+                          <div className="absolute bottom-[42px] right-0 z-30 w-[280px] rounded-[14px] bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+                            <button
+                              type="button"
+                              onClick={() => setOpenFareDetailKey(null)}
+                              className="absolute right-3 top-2 text-[20px] leading-none text-[#999]"
+                            >
+                              ×
+                            </button>
 
-      <div className="mb-2 text-right">
-        <div className="text-[16px] font-bold text-[#e91e63]">
-          {formatPrice(pkg.price)}/Người lớn
-        </div>
-        <div className="text-[14px] text-[#777]">Giá đi trung bình</div>
-      </div>
+                            <div className="mb-2 text-right">
+                              <div className="text-[16px] font-bold text-[#e91e63]">
+                                {formatPrice(pkg.price)}/Người lớn
+                              </div>
+                              <div className="text-[14px] text-[#777]">
+                                Giá đi trung bình
+                              </div>
+                            </div>
 
-      <div className="space-y-2 border-t border-[#ececec] pt-3 text-[15px] text-[#444]">
-        <div className="flex items-center justify-between">
-          <span>Vé người lớn</span>
-          <span>{formatPrice(pkg.price)} x 1</span>
-        </div>
+                            <div className="space-y-2 border-t border-[#ececec] pt-3 text-[15px] text-[#444]">
+                              <div className="flex items-center justify-between">
+                                <span>Vé người lớn</span>
+                                <span>{formatPrice(pkg.price)} x 1</span>
+                              </div>
 
-        <div className="flex items-center justify-between text-[#8a8a8a]">
-          <span>Giá</span>
-          <span>{formatPrice(Math.round(pkg.price * 0.73))}</span>
-        </div>
+                              <div className="flex items-center justify-between text-[#8a8a8a]">
+                                <span>Giá</span>
+                                <span>{formatPrice(Math.round(pkg.price * 0.73))}</span>
+                              </div>
 
-        <div className="flex items-center justify-between text-[#8a8a8a]">
-          <span>Thuế và phí</span>
-          <span>{formatPrice(Math.round(pkg.price * 0.27))}</span>
-        </div>
-      </div>
+                              <div className="flex items-center justify-between text-[#8a8a8a]">
+                                <span>Thuế và phí</span>
+                                <span>{formatPrice(Math.round(pkg.price * 0.27))}</span>
+                              </div>
+                            </div>
 
-      <div className="mt-3 border-t border-[#ececec] pt-3 text-[15px] text-[#444]">
-        <div className="flex items-center justify-between">
-          <span>Giảm giá</span>
-          <span>0 đ</span>
-        </div>
+                            <div className="mt-3 border-t border-[#ececec] pt-3 text-[15px] text-[#444]">
+                              <div className="flex items-center justify-between">
+                                <span>Giảm giá</span>
+                                <span>0 đ</span>
+                              </div>
 
-        <div className="mt-1 flex items-center justify-between font-medium">
-          <span>Tổng giá đi</span>
-          <span>{formatPrice(pkg.price)}</span>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
+                              <div className="mt-1 flex items-center justify-between font-medium">
+                                <span>Tổng giá đi</span>
+                                <span>{formatPrice(pkg.price)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
 
-    <button
-      type="button"
-      onClick={() => {
-        window.location.href = `/ve-may-bay/dat-ve?id=${item.id}`;
-      }}
-      className="rounded-[10px] bg-[#e11a8c] px-6 py-3 text-[16px] font-semibold text-white"
-    >
-      Đặt vé
-    </button>
-  </div>
-</div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.location.href = `/ve-may-bay/dat-ve?id=${item.id}`;
+                        }}
+                        className="rounded-[10px] bg-[#e11a8c] px-6 py-3 text-[16px] font-semibold text-white"
+                      >
+                        Đặt vé
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -761,188 +770,188 @@ const swapAirports = () => {
       <MainHeader />
 
       <section className="mx-auto max-w-[1280px] px-4 pt-16">
-  <div className="rounded-[16px] border border-[#ececec] bg-white p-4 shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
-    <div className="grid grid-cols-[140px_1fr_140px] items-center gap-4 border-b border-[#ededed] pb-4">
-      <label className="flex items-center gap-2 text-[16px] text-[#444]">
-        <select
-          value={tripType === "oneway" ? "Một chiều" : "Khứ hồi"}
-          onChange={(e) =>
-            setTripType(e.target.value === "Khứ hồi" ? "roundtrip" : "oneway")
-          }
-          className="w-full appearance-none bg-transparent text-[16px] outline-none"
-        >
-          <option>Một chiều</option>
-          <option>Khứ hồi</option>
-        </select>
-        <ChevronDown size={18} className="text-[#aaa]" />
-      </label>
+        <div className="rounded-[16px] border border-[#ececec] bg-white p-4 shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+          <div className="grid grid-cols-[140px_1fr_140px] items-center gap-4 border-b border-[#ededed] pb-4">
+            <label className="flex items-center gap-2 text-[16px] text-[#444]">
+              <select
+                value={tripType === "oneway" ? "Một chiều" : "Khứ hồi"}
+                onChange={(e) =>
+                  setTripType(e.target.value === "Khứ hồi" ? "roundtrip" : "oneway")
+                }
+                className="w-full appearance-none bg-transparent text-[16px] outline-none"
+              >
+                <option>Một chiều</option>
+                <option>Khứ hồi</option>
+              </select>
+              <ChevronDown size={18} className="text-[#aaa]" />
+            </label>
 
-      <label className="flex items-center gap-2 text-[16px] text-[#444]">
-        <Users size={20} className="text-[#989898]" />
-        <select
-          value={passengers}
-          onChange={(e) => setPassengers(e.target.value)}
-          className="w-full appearance-none bg-transparent text-[16px] outline-none"
-        >
-          {passengerOptions.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-        <ChevronDown size={18} className="text-[#aaa]" />
-      </label>
+            <label className="flex items-center gap-2 text-[16px] text-[#444]">
+              <Users size={20} className="text-[#989898]" />
+              <select
+                value={passengers}
+                onChange={(e) => setPassengers(e.target.value)}
+                className="w-full appearance-none bg-transparent text-[16px] outline-none"
+              >
+                {passengerOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={18} className="text-[#aaa]" />
+            </label>
 
-      <label className="flex items-center gap-2 text-[16px] text-[#444]">
-        <Armchair size={20} className="text-[#989898]" />
-        <select
-          value={cabin}
-          onChange={(e) => setCabin(e.target.value)}
-          className="w-full appearance-none bg-transparent text-[16px] outline-none"
-        >
-          {cabinOptions.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-        <ChevronDown size={18} className="text-[#aaa]" />
-      </label>
-    </div>
+            <label className="flex items-center gap-2 text-[16px] text-[#444]">
+              <Armchair size={20} className="text-[#989898]" />
+              <select
+                value={cabin}
+                onChange={(e) => setCabin(e.target.value)}
+                className="w-full appearance-none bg-transparent text-[16px] outline-none"
+              >
+                {cabinOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={18} className="text-[#aaa]" />
+            </label>
+          </div>
 
-    <div className="mt-4 grid grid-cols-[1fr_42px_1fr_1.1fr_88px] gap-4">
-      <div className="relative rounded-[12px] border border-[#e6e6e6] px-4 py-3">
-        <div className="mb-1 text-[14px] text-[#4d4d4d]">Điểm đi</div>
-        <input
-          value={fromKeyword}
-          onChange={(e) => {
-            setFromKeyword(e.target.value);
-            setFromOpen(true);
-          }}
-          onFocus={() => setFromOpen(true)}
-          className="w-full bg-transparent text-[16px] font-medium outline-none"
-          placeholder="Nhập sân bay đi"
-        />
+          <div className="mt-4 grid grid-cols-[1fr_42px_1fr_1.1fr_88px] gap-4">
+            <div className="relative rounded-[12px] border border-[#e6e6e6] px-4 py-3">
+              <div className="mb-1 text-[14px] text-[#4d4d4d]">Điểm đi</div>
+              <input
+                value={fromKeyword}
+                onChange={(e) => {
+                  setFromKeyword(e.target.value);
+                  setFromOpen(true);
+                }}
+                onFocus={() => setFromOpen(true)}
+                className="w-full bg-transparent text-[16px] font-medium outline-none"
+                placeholder="Nhập sân bay đi"
+              />
 
-        {fromOpen && (
-          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-[240px] overflow-y-auto rounded-[12px] border border-[#e5e5e5] bg-white shadow-lg">
-            {filteredFromAirports.length > 0 ? (
-              filteredFromAirports.map((item) => (
-                <button
-                  key={item.code}
-                  type="button"
-                  onClick={() => {
-                    setFrom(item.label);
-                    setFromKeyword(item.label);
-                    setFromOpen(false);
-                  }}
-                  className="block w-full px-4 py-3 text-left text-[15px] text-[#333] hover:bg-[#f8f8f8]"
-                >
-                  {item.label}
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-3 text-[14px] text-[#888]">
-                Không tìm thấy sân bay
+              {fromOpen && (
+                <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-[240px] overflow-y-auto rounded-[12px] border border-[#e5e5e5] bg-white shadow-lg">
+                  {filteredFromAirports.length > 0 ? (
+                    filteredFromAirports.map((item) => (
+                      <button
+                        key={item.code}
+                        type="button"
+                        onClick={() => {
+                          setFrom(item.label);
+                          setFromKeyword(item.label);
+                          setFromOpen(false);
+                        }}
+                        className="block w-full px-4 py-3 text-left text-[15px] text-[#333] hover:bg-[#f8f8f8]"
+                      >
+                        {item.label}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-[14px] text-[#888]">
+                      Không tìm thấy sân bay
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={swapAirports}
+              className="flex items-center justify-center text-[24px] text-[#444]"
+            >
+              ↔
+            </button>
+
+            <div className="relative rounded-[12px] border border-[#e6e6e6] px-4 py-3">
+              <div className="mb-1 text-[14px] text-[#4d4d4d]">Điểm đến</div>
+              <input
+                value={toKeyword}
+                onChange={(e) => {
+                  setToKeyword(e.target.value);
+                  setToOpen(true);
+                }}
+                onFocus={() => setToOpen(true)}
+                className="w-full bg-transparent text-[16px] font-medium outline-none"
+                placeholder="Nhập sân bay đến"
+              />
+
+              {toOpen && (
+                <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-[240px] overflow-y-auto rounded-[12px] border border-[#e5e5e5] bg-white shadow-lg">
+                  {filteredToAirports.length > 0 ? (
+                    filteredToAirports.map((item) => (
+                      <button
+                        key={item.code}
+                        type="button"
+                        onClick={() => {
+                          setTo(item.label);
+                          setToKeyword(item.label);
+                          setToOpen(false);
+                        }}
+                        className="block w-full px-4 py-3 text-left text-[15px] text-[#333] hover:bg-[#f8f8f8]"
+                      >
+                        {item.label}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-[14px] text-[#888]">
+                      Không tìm thấy sân bay
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-[12px] border border-[#e6e6e6] px-4 py-3">
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-[15px]">
+                  <input
+                    type="checkbox"
+                    checked={tripType === "oneway"}
+                    onChange={() => setTripType("oneway")}
+                    className="h-5 w-5 accent-[#e11a8c]"
+                  />
+                  <span>Một chiều</span>
+                </label>
+
+                <label className="flex items-center gap-2 text-[15px]">
+                  <input
+                    type="checkbox"
+                    checked={tripType === "roundtrip"}
+                    onChange={() => setTripType("roundtrip")}
+                    className="h-5 w-5 accent-[#e11a8c]"
+                  />
+                  <span>Khứ hồi</span>
+                </label>
               </div>
-            )}
-          </div>
-        )}
-      </div>
 
-      <button
-        type="button"
-        onClick={swapAirports}
-        className="flex items-center justify-center text-[24px] text-[#444]"
-      >
-        ↔
-      </button>
-
-      <div className="relative rounded-[12px] border border-[#e6e6e6] px-4 py-3">
-        <div className="mb-1 text-[14px] text-[#4d4d4d]">Điểm đến</div>
-        <input
-          value={toKeyword}
-          onChange={(e) => {
-            setToKeyword(e.target.value);
-            setToOpen(true);
-          }}
-          onFocus={() => setToOpen(true)}
-          className="w-full bg-transparent text-[16px] font-medium outline-none"
-          placeholder="Nhập sân bay đến"
-        />
-
-        {toOpen && (
-          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-[240px] overflow-y-auto rounded-[12px] border border-[#e5e5e5] bg-white shadow-lg">
-            {filteredToAirports.length > 0 ? (
-              filteredToAirports.map((item) => (
-                <button
-                  key={item.code}
-                  type="button"
-                  onClick={() => {
-                    setTo(item.label);
-                    setToKeyword(item.label);
-                    setToOpen(false);
-                  }}
-                  className="block w-full px-4 py-3 text-left text-[15px] text-[#333] hover:bg-[#f8f8f8]"
-                >
-                  {item.label}
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-3 text-[14px] text-[#888]">
-                Không tìm thấy sân bay
+              <div className="mt-2">
+                <input
+                  type="date"
+                  value={departDate}
+                  onChange={(e) => setDepartDate(e.target.value)}
+                  className="w-full bg-transparent text-[16px] font-medium outline-none"
+                />
+                <div className="mt-1 text-[14px] text-[#666]">
+                  {formatDisplayDate(departDate)}
+                </div>
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
 
-      <div className="rounded-[12px] border border-[#e6e6e6] px-4 py-3">
-        <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-[15px]">
-            <input
-              type="checkbox"
-              checked={tripType === "oneway"}
-              onChange={() => setTripType("oneway")}
-              className="h-5 w-5 accent-[#e11a8c]"
-            />
-            <span>Một chiều</span>
-          </label>
-
-          <label className="flex items-center gap-2 text-[15px]">
-            <input
-              type="checkbox"
-              checked={tripType === "roundtrip"}
-              onChange={() => setTripType("roundtrip")}
-              className="h-5 w-5 accent-[#e11a8c]"
-            />
-            <span>Khứ hồi</span>
-          </label>
-        </div>
-
-        <div className="mt-2">
-          <input
-            type="date"
-            value={departDate}
-            onChange={(e) => setDepartDate(e.target.value)}
-            className="w-full bg-transparent text-[16px] font-medium outline-none"
-          />
-          <div className="mt-1 text-[14px] text-[#666]">
-            {formatDisplayDate(departDate)}
+            <button
+              type="button"
+              onClick={handleSearch}
+              className="flex items-center justify-center rounded-[12px] bg-[#e11a8c] text-white"
+            >
+              <Search size={28} />
+            </button>
           </div>
         </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleSearch}
-        className="flex items-center justify-center rounded-[12px] bg-[#e11a8c] text-white"
-      >
-        <Search size={28} />
-      </button>
-    </div>
-  </div>
-</section>
+      </section>
 
       <section className="mx-auto max-w-[1280px] px-4 pb-16 pt-7">
         <div className="grid grid-cols-[282px_1fr] gap-5">
@@ -1295,5 +1304,25 @@ const swapAirports = () => {
       <FloatingContact />
       <Footer />
     </main>
+  );
+}
+
+export default function FlightSearchResultPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-white text-[#333]">
+          <HeaderTop />
+          <MainHeader />
+          <div className="mx-auto max-w-[1280px] px-4 py-16 text-[22px]">
+            Đang tải dữ liệu chuyến bay...
+          </div>
+          <FloatingContact />
+          <Footer />
+        </main>
+      }
+    >
+      <FlightSearchResultContent />
+    </Suspense>
   );
 }
