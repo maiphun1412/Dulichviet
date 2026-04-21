@@ -120,7 +120,7 @@ export default function FlightSearchBox({
     <div
       className={
         embedded
-          ? "absolute left-1/2 top-[61%] z-20 w-full max-w-[1080px] -translate-x-1/2 -translate-y-1/2 px-4"
+  ? "absolute right-[120px] top-[61%] z-20 w-full max-w-[1080px] -translate-y-1/2 px-4"
           : "mx-auto max-w-[1080px] px-4"
       }
     >
@@ -134,14 +134,14 @@ export default function FlightSearchBox({
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_1.1fr]">
           <div className="rounded-[10px] border border-[#e6e6e6] bg-white px-3 py-2.5">
-            <div className="mb-1 flex items-center gap-2 text-[13px] text-[#5d5d5d]">
+            <div className="mb-1 flex items-center gap-2 text-[px] text-[#5d5d5d]">
               <PlaneTakeoff size={15} />
               <span>Điểm đi</span>
             </div>
             <select
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="w-full appearance-none bg-transparent text-[16px] font-medium text-[#233143] outline-none"
+              className="w-full appearance-none bg-transparent text-[18px] font-medium text-[#233143] outline-none"
             >
               {airportOptions.map((item) => (
                 <option key={item.code} value={item.label}>
@@ -168,7 +168,7 @@ export default function FlightSearchBox({
             <select
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className="w-full appearance-none bg-transparent text-[16px] font-medium text-[#233143] outline-none"
+              className="w-full appearance-none bg-transparent text-[18px] font-medium text-[#233143] outline-none"
             >
               {airportOptions.map((item) => (
                 <option key={item.code} value={item.label}>

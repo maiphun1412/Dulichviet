@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Fragment, useState } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
 import {
   BookOpen,
   CalendarDays,
@@ -13,19 +18,41 @@ import {
   Ticket,
 } from "lucide-react";
 import type { TourDetail } from "@/lib/tours";
-import Link from "next/link";
 
 type Props = {
   tour: TourDetail;
 };
 
+type DepartureDetailUI = {
+  adult?: string;
+  child?: string;
+  smallChild?: string;
+  infant?: string;
+  foreignSurcharge?: string;
+  vietKieuSurcharge?: string;
+  singleRoomSurcharge?: string;
+  discount?: string;
+  note?: string;
+};
+
+type DepartureItemUI = TourDetail["departures"][number] & {
+  detail?: DepartureDetailUI;
+};
+
 export default function TourDetailContent({ tour }: Props) {
+  const router = useRouter();
+
   const [openDay, setOpenDay] = useState(0);
   const [showIncludes, setShowIncludes] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [showFavoritePopup, setShowFavoritePopup] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [openDetailId, setOpenDetailId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState(
     tour.departures?.[0]?.date || tour.date || ""
   );
+
+  const departures = (tour.departures ?? []) as DepartureItemUI[];
 
   const summaryRows = [
     { label: "Mã tour:", value: tour.code || "" },
@@ -35,8 +62,82 @@ export default function TourDetailContent({ tour }: Props) {
     { label: "Xuất phát:", value: tour.startFrom || tour.departure || "" },
   ];
 
+  const toggleDetail = (id: number) => {
+    setOpenDetailId((prev) => (prev === id ? null : id));
+  };
+
+  const addWrappedText = (
+    pdf: jsPDF,
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    lineHeight = 7
+  ) => {
+    const lines = pdf.splitTextToSize(text || "", maxWidth);
+    let nextY = y;
+
+    for (const line of lines) {
+      if (nextY > 280) {
+        pdf.addPage();
+        nextY = 20;
+      }
+      pdf.text(line, x, nextY);
+      nextY += lineHeight;
+    }
+
+    return nextY;
+  };
+
+  const addSectionTitle = (pdf: jsPDF, title: string, y: number) => {
+    let nextY = y;
+    if (nextY > 272) {
+      pdf.addPage();
+      nextY = 20;
+    }
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(15);
+    pdf.text(title, 14, nextY);
+    return nextY + 8;
+  };
+
+ const handleDownloadPdf = async () => {
+  const element = document.getElementById("tour-pdf-content");
+  if (!element) return;
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff",
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const pageWidth = 210;
+  const pageHeight = 297;
+
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save("tour-detail.pdf");
+};
+
   return (
-    <div className="w-full bg-white">
+  <div className="w-full bg-white" id="tour-pdf-content">
       <div className="mx-auto max-w-[1460px] bg-white px-4 pb-12 pt-6 md:px-6 lg:px-8">
         <div className="mb-8 bg-[#f1f3f5] px-4 py-3 text-[15px] text-[#777]">
           Trang Chủ &gt; Loại Hình Du Lịch &gt; {tour.title}
@@ -46,9 +147,7 @@ export default function TourDetailContent({ tour }: Props) {
           {tour.title}
         </h1>
 
-        {/* KHỐI CHÍNH: sidebar phải sẽ sticky và tự dừng ở cuối khối này */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_430px] xl:items-start">
-          {/* CỘT TRÁI */}
           <div className="min-w-0">
             <img
               src={tour.image}
@@ -232,33 +331,169 @@ export default function TourDetailContent({ tour }: Props) {
                   </thead>
 
                   <tbody>
-                    {tour.departures.map((item, idx) => (
-                      <tr
-                        key={`${item.id}-${idx}`}
-                        className="border-b border-[#ececec] text-[17px] text-[#333]"
-                      >
-                        <td className="px-2 py-4">{idx + 1}</td>
-                        <td className="px-2 py-4">{item.date}</td>
-                        <td className="px-2 py-4">{item.airline}</td>
-                        <td className="px-2 py-4 font-bold">{item.price}</td>
-                        <td className="px-2 py-4">{item.seats}</td>
-                        <td className="px-2 py-4">
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              className="rounded-[6px] bg-[#ef1486] px-4 py-2 text-[16px] font-medium text-white"
-                            >
-                              {item.status}
-                            </button>
-                            <button
-                              type="button"
-                              className="rounded-[6px] border border-[#ef1486] px-4 py-2 text-[16px] font-medium text-[#ef1486]"
-                            >
-                              Chi tiết
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                    {departures.map((item, idx) => (
+                      <Fragment key={`${item.id}-${idx}`}>
+                        <tr className="border-b border-[#ececec] text-[17px] text-[#333]">
+                          <td className="px-2 py-4">{idx + 1}</td>
+                          <td className="px-2 py-4">{item.date}</td>
+                          <td className="px-2 py-4">{item.airline}</td>
+                          <td className="px-2 py-4 font-bold">{item.price}</td>
+                          <td className="px-2 py-4">{item.seats}</td>
+                          <td className="px-2 py-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (item.status === "Book") {
+                                    router.push(`/tour/${tour.slug}/dat-tour`);
+                                  }
+                                }}
+                                className="rounded-[6px] bg-[#ef1486] px-4 py-2 text-[16px] font-medium text-white"
+                              >
+                                {item.status}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => toggleDetail(item.id)}
+                                className="rounded-[6px] border border-[#ef1486] px-4 py-2 text-[16px] font-medium text-[#ef1486]"
+                              >
+                                Chi tiết
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {openDetailId === item.id && item.detail && (
+                          <tr>
+                            <td colSpan={6} className="px-0 py-0">
+                              <div className="mb-4 mt-1 border border-[#ef1486] bg-white">
+                                <div className="flex items-center justify-between border-b border-[#dcdcdc] px-3 py-2 text-[15px] font-bold text-[#111]">
+                                  <span>
+                                    Bảng chi tiết giá tour ({item.airline}) {item.date}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenDetailId(null)}
+                                    className="text-[22px] font-bold leading-none text-[#d30000]"
+                                  >
+                                    x
+                                  </button>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                  <table className="w-full border-collapse text-center text-[15px]">
+                                    <thead>
+                                      <tr className="bg-[#f5f5f5] font-bold text-[#222]">
+                                        <th className="border border-[#d5d5d5] px-3 py-2">
+                                          Loại giá\Độ tuổi
+                                        </th>
+                                        <th className="border border-[#d5d5d5] px-3 py-2">
+                                          Người lớn
+                                        </th>
+                                        <th className="border border-[#d5d5d5] px-3 py-2">
+                                          Trẻ em
+                                        </th>
+                                        <th className="border border-[#d5d5d5] px-3 py-2">
+                                          Trẻ nhỏ
+                                        </th>
+                                        <th className="border border-[#d5d5d5] px-3 py-2">
+                                          Sơ sinh
+                                        </th>
+                                      </tr>
+                                    </thead>
+
+                                    <tbody>
+                                      <tr>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">Giá</td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.adult || ""}</td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.child || ""}</td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.smallChild || ""}</td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.infant || ""}</td>
+                                      </tr>
+
+                                      <tr>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          Phụ thu Nước Ngoài
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.foreignSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.foreignSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.foreignSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.foreignSurcharge || "0đ"}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          Phụ thu Việt Kiều
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.vietKieuSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.vietKieuSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.vietKieuSurcharge || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.vietKieuSurcharge || "0đ"}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          Phụ thu Phòng đơn
+                                        </td>
+                                        <td
+                                          colSpan={4}
+                                          className="border border-[#d5d5d5] px-3 py-2"
+                                        >
+                                          {item.detail.singleRoomSurcharge || "0đ"}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          Giảm giá
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.discount || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.discount || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.discount || "0đ"}
+                                        </td>
+                                        <td className="border border-[#d5d5d5] px-3 py-2">
+                                          {item.detail.discount || "0đ"}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td
+                                          colSpan={5}
+                                          className="border border-[#d5d5d5] px-3 py-2 text-left font-semibold"
+                                        >
+                                          Ghi chú: {item.detail.note || ""}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -287,7 +522,6 @@ export default function TourDetailContent({ tour }: Props) {
               </div>
             </section>
 
-            {/* NÚT PDF là điểm dừng của sidebar phải */}
             <div className="mb-4 flex flex-wrap items-center gap-4 text-[16px] text-[#333]">
               <div className="flex items-center gap-1 text-[28px] leading-none text-[#f3ab11]">
                 <span>★</span>
@@ -309,6 +543,7 @@ export default function TourDetailContent({ tour }: Props) {
 
               <button
                 type="button"
+                onClick={() => setShowFavoritePopup(true)}
                 className="rounded-[4px] border border-[#cfcfcf] bg-[#f5f5f5] px-4 py-[7px] text-[16px] text-[#444]"
               >
                 Yêu thích
@@ -316,14 +551,14 @@ export default function TourDetailContent({ tour }: Props) {
 
               <button
                 type="button"
+                onClick={handleDownloadPdf}
                 className="ml-auto rounded-[4px] bg-[#ef1486] px-4 py-[8px] text-[16px] font-bold text-white"
               >
-                Tải về PDF
+                {isDownloadingPdf ? "Đang xuất PDF..." : "Tải về PDF"}
               </button>
             </div>
           </div>
 
-          {/* CỘT PHẢI: sticky toàn bộ, tự dừng khi hết khối grid */}
           <div className="min-w-0 xl:sticky xl:top-6 xl:self-start">
             <div className="space-y-7">
               <div className="border border-[#dddddd] bg-white">
@@ -379,11 +614,11 @@ export default function TourDetailContent({ tour }: Props) {
                   />
 
                   <Link
-  href={`/tour/${tour.slug}/dat-tour`}
-  className="flex h-[54px] w-full items-center justify-center rounded-[4px] bg-[#1296ea] text-[18px] font-extrabold uppercase tracking-[0.3px] text-white transition hover:bg-[#0d86d2]"
->
-  ĐẶT TOUR
-</Link>
+                    href={`/tour/${tour.slug}/dat-tour`}
+                    className="flex h-[54px] w-full items-center justify-center rounded-[4px] bg-[#1296ea] text-[18px] font-extrabold uppercase tracking-[0.3px] text-white transition hover:bg-[#0d86d2]"
+                  >
+                    ĐẶT TOUR
+                  </Link>
                 </div>
               </div>
 
@@ -429,7 +664,6 @@ export default function TourDetailContent({ tour }: Props) {
           </div>
         </div>
 
-        {/* TOUR LIÊN QUAN RA NGOÀI để sidebar dừng trước phần này */}
         <div className="mt-2">
           <div className="mb-5 text-[20px] font-bold uppercase tracking-[0.2px] text-[#134ea0]">
             TOUR LIÊN QUAN
@@ -467,6 +701,69 @@ export default function TourDetailContent({ tour }: Props) {
           </div>
         </div>
       </div>
+
+      {showFavoritePopup && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 px-4">
+          <div className="relative w-full max-w-[470px] rounded-[6px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+            <button
+              type="button"
+              onClick={() => setShowFavoritePopup(false)}
+              className="absolute right-4 top-3 text-[34px] leading-none text-[#8d8d8d]"
+            >
+              ×
+            </button>
+
+            <div className="pr-8">
+              <h3 className="mb-3 text-[26px] font-bold text-[#3a3a3a]">
+                Đăng nhập
+              </h3>
+
+              <p className="mb-5 text-[15px] leading-[1.6] text-[#7a7a7a]">
+                Đăng nhập tài khoản Du Lịch Việt và khám phá niềm vui của bạn ở
+                bất cứ đâu
+              </p>
+
+              <div className="mb-4">
+                <label className="mb-2 block text-[15px] text-[#444]">
+                  Email (*)
+                </label>
+                <input
+                  type="email"
+                  placeholder="Nhập email..."
+                  className="h-[42px] w-full rounded-[4px] border border-[#d9d9d9] px-4 text-[15px] outline-none"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-[15px] text-[#444]">
+                  Mật khẩu (*)
+                </label>
+                <input
+                  type="password"
+                  placeholder="Nhập mật khẩu..."
+                  className="h-[42px] w-full rounded-[4px] border border-[#d9d9d9] px-4 text-[15px] outline-none"
+                />
+              </div>
+
+              <button
+                type="button"
+                className="mb-4 flex h-[50px] w-full items-center justify-center rounded-full bg-[#ef1486] text-[20px] font-bold text-white"
+              >
+                ĐĂNG NHẬP
+              </button>
+
+              <div className="flex items-center justify-between text-[15px] text-[#666]">
+                <button type="button" className="hover:underline">
+                  Quên mật khẩu?
+                </button>
+                <button type="button" className="hover:underline">
+                  Đăng ký
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

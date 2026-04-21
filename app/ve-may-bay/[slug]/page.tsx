@@ -112,22 +112,34 @@ export default async function FlightPostDetailPage({ params }: PageProps) {
           </div>
 
           <div className="mt-12 border-t border-[#dddddd] pt-8">
-            <h2 className="mb-6 text-[27px] font-bold uppercase text-[#222]">
-              Tin liên quan
-            </h2>
+  <h2 className="mb-6 text-[27px] font-bold uppercase text-[#222]">
+    Tin liên quan
+  </h2>
 
-            <div className="grid grid-cols-1 gap-x-10 gap-y-4 md:grid-cols-2 xl:grid-cols-3">
-              {relatedList.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/ve-may-bay/${item.slug}`}
-                  className="text-[17px] leading-[1.6] text-[#222] hover:text-[#1560aa]"
-                >
-                  • {item.title}
-                </Link>
-              ))}
-            </div>
-          </div>
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    {relatedList.map((item) => (
+      <Link
+        key={item.id}
+        href={`/ve-may-bay/${item.slug}`}
+        className="group overflow-hidden rounded-[8px] border border-[#dddddd] bg-white transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+      >
+        <div className="relative h-[220px] w-full overflow-hidden bg-[#f3f3f3]">
+          <img
+            src={item.image}
+            alt={item.title}
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+          />
+        </div>
+
+        <div className="p-4">
+          <h3 className="text-[17px] font-medium leading-[1.6] text-[#222] group-hover:text-[#1560aa]">
+            {item.title}
+          </h3>
+        </div>
+      </Link>
+    ))}
+  </div>
+</div>
         </div>
       </section>
 

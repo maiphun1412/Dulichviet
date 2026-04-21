@@ -1,4 +1,4 @@
-import { Hotel, Car, Globe, Plane } from "lucide-react";
+
 export default function Footer() {
   const domestic1 = [
     "Du lịch Nam Du",
@@ -61,67 +61,12 @@ export default function Footer() {
     "Phiếu góp ý",
   ];
 
-  const featureBoxes = [
-  {
-    title: "KHÁCH SẠN",
-    desc: "Khách sạn tốt nhất tại các địa điểm du lịch nổi tiếng.",
-    icon: Hotel,
-    bg: "bg-[#e45198]",
-  },
-  {
-    title: "THUÊ XE",
-    desc: "Dịch vụ thuê xe giá tốt từ các nhà xe uy tín và chu đáo",
-    icon: Car,
-    bg: "bg-[#106db8]",
-  },
-  {
-    title: "VISA",
-    desc: "Dịch vụ Visa nhanh, rẻ. Visa trọn gói, thủ tục đơn giản",
-    icon: Globe,
-    bg: "bg-[#e28733]",
-  },
-  {
-    title: "VÉ MÁY BAY",
-    desc: "Vé máy bay giá rẻ nhất, nhiều khuyến mãi hấp dẫn",
-    icon: Plane,
-    bg: "bg-[#1f9fbe]",
-  },
 
-  ];
 
   return (
     <footer className="bg-white text-[14px] text-[#333]">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-8">
-        <div className="pb-4 pt-8">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {featureBoxes.map((item) => {
-  const Icon = item.icon;
 
-  return (
-    <a
-      key={item.title}
-      href="#"
-      className={`flex min-h-[120px] items-center gap-5 rounded-[4px] px-6 py-5 text-white ${item.bg}`}
-    >
-      {/* ICON */}
-      <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[6px] bg-white/20">
-        <Icon size={32} strokeWidth={2.5} className="text-white" />
-      </div>
-
-      {/* TEXT */}
-      <div>
-        <h3 className="mb-1 text-[17px] font-bold uppercase text-white">
-          {item.title}
-        </h3>
-        <p className="text-[14px] leading-[1.4] text-white/90">
-          {item.desc}
-        </p>
-      </div>
-    </a>
-  );
-})}
-          </div>
-        </div>
 
         <div className="border-t-[3px] border-[#f0178d] pt-8">
           <div className="grid grid-cols-12 gap-x-6 gap-y-8">

@@ -127,13 +127,12 @@ function HotelSidebar({
           </div>
         </div>
 
-       <button
-  type="button"
-  onClick={onContact}
-  className="h-[36px] w-full bg-[#e3138d] text-[15px] font-normal uppercase text-white transition hover:bg-[#cc0f7d]"
+ <Link
+  href={`/khach-san/lien-he-khach-san/${hotel.slug}`}
+  className="flex h-[36px] w-full items-center justify-center bg-[#e3138d] text-[15px] font-normal uppercase text-white transition hover:bg-[#cc0f7d]"
 >
   LIÊN HỆ
-</button>
+</Link>
       </div>
 
       <div className="pt-[16px] text-[13px] leading-[1.75] text-[#555]">
