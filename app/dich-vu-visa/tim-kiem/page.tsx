@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -18,7 +18,7 @@ function normalizeText(value: string) {
     .trim();
 }
 
-export default function VisaSearchPage() {
+function VisaSearchContent() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("q")?.trim() || "";
 
@@ -153,5 +153,25 @@ export default function VisaSearchPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function VisaSearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white text-[#222]">
+          <MainHeader />
+          <main className="mx-auto max-w-[1180px] px-4 py-8">
+            <div className="rounded-[8px] border border-[#e5e5e5] bg-[#fafafa] px-5 py-6 text-[15px] text-[#666]">
+              Đang tải dữ liệu...
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <VisaSearchContent />
+    </Suspense>
   );
 }
