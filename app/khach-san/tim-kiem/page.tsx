@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -88,7 +88,7 @@ function getTopAmenities(hotel: HotelItem) {
   return (hotel.amenities || []).slice(0, 5);
 }
 
-export default function HotelSearchPage() {
+function HotelSearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -96,8 +96,8 @@ export default function HotelSearchPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [destination, setDestination] = useState(
-  searchParams.get("destination") || "Nha Trang"
-);
+    searchParams.get("destination") || "Nha Trang"
+  );
   const [checkIn, setCheckIn] = useState(
     searchParams.get("checkIn") || "2026-04-27"
   );
@@ -143,26 +143,27 @@ export default function HotelSearchPage() {
       mounted = false;
     };
   }, []);
-const filteredByDestination = useMemo(() => {
-  const destinationText = normalizeText(destination);
 
-  if (!destinationText) return allHotels;
+  const filteredByDestination = useMemo(() => {
+    const destinationText = normalizeText(destination);
 
-  const destinationCore = destinationText.split("-")[0].trim();
+    if (!destinationText) return allHotels;
 
-  return allHotels.filter((hotel) => {
-    const haystack = normalizeText(
-      [hotel.name, hotel.city, hotel.area, hotel.addressText]
-        .filter(Boolean)
-        .join(" ")
-    );
+    const destinationCore = destinationText.split("-")[0].trim();
 
-    return (
-      haystack.includes(destinationText) ||
-      haystack.includes(destinationCore)
-    );
-  });
-}, [allHotels, destination]);
+    return allHotels.filter((hotel) => {
+      const haystack = normalizeText(
+        [hotel.name, hotel.city, hotel.area, hotel.addressText]
+          .filter(Boolean)
+          .join(" ")
+      );
+
+      return (
+        haystack.includes(destinationText) ||
+        haystack.includes(destinationCore)
+      );
+    });
+  }, [allHotels, destination]);
 
   const areaOptions = useMemo(() => {
     const uniqueAreas = Array.from(
@@ -473,7 +474,7 @@ const filteredByDestination = useMemo(() => {
                   {filteredHotels.map((hotel) => (
                     <Link
                       key={hotel.id}
-                     href={`/khach-san/chi-tiet/${hotel.slug}`}
+                      href={`/khach-san/chi-tiet/${hotel.slug}`}
                       className="grid gap-4 border border-[#d6d6d6] bg-white p-[10px] transition hover:shadow-sm lg:grid-cols-[215px_1fr_170px]"
                     >
                       <div className="relative h-[145px] overflow-hidden">
@@ -556,5 +557,25 @@ const filteredByDestination = useMemo(() => {
 
       <Footer />
     </div>
+  );
+}
+
+export default function HotelSearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white text-[#222]">
+          <MainHeader />
+          <main className="mx-auto max-w-[1180px] px-4 py-8">
+            <div className="rounded-[4px] border border-[#dddddd] bg-white p-8 text-center text-[16px] text-[#666]">
+              Đang tải dữ liệu...
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <HotelSearchContent />
+    </Suspense>
   );
 }
