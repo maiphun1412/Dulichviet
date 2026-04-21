@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import HeaderTop from "@/components/HeaderTop";
 import MainHeader from "@/components/MainHeader";
@@ -45,7 +45,6 @@ type FlightItem = {
   promoText: string;
   active: boolean;
   featured: boolean;
-
   carryOnText?: string;
   checkedBaggageText?: string;
   refundPolicy?: string;
@@ -58,6 +57,7 @@ type FlightItem = {
 function getAirportName(label: string, code: string) {
   return label.replace(`(${code})`, "").trim();
 }
+
 function formatPrice(price: number) {
   return `${price.toLocaleString("vi-VN")} ₫`;
 }
@@ -83,7 +83,7 @@ function formatDisplayDate(dateValue: string) {
   )}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 }
 
-export default function FlightBookingPage() {
+function FlightBookingContent() {
   const searchParams = useSearchParams();
   const flightId = searchParams.get("id");
 
@@ -137,51 +137,50 @@ export default function FlightBookingPage() {
           const docSnap = snapshot.docs[0];
           const data = docSnap.data();
 
-         setFlight({
-  id: String(data.id ?? docSnap.id),
-  fromCode: String(data.fromCode ?? ""),
-  fromLabel: String(data.fromLabel ?? ""),
-  toCode: String(data.toCode ?? ""),
-  toLabel: String(data.toLabel ?? ""),
-  departDate: String(data.departDate ?? ""),
-  tripType: String(data.tripType ?? "oneway"),
-  airline: String(data.airline ?? ""),
-  airlineCode: String(data.airlineCode ?? ""),
-  airlineLogo: String(data.airlineLogo ?? ""),
-  flightNumber: String(data.flightNumber ?? ""),
-  aircraft: String(data.aircraft ?? ""),
-  departTime: String(data.departTime ?? ""),
-  arriveTime: String(data.arriveTime ?? ""),
-  durationText: String(data.durationText ?? ""),
-  stopsText: String(data.stopsText ?? ""),
-  cabin: String(data.cabin ?? ""),
-  price: Number(data.price ?? 0),
-  seatsLeft: Number(data.seatsLeft ?? 0),
-  baggageText: String(data.baggageText ?? ""),
-  promoText: String(data.promoText ?? ""),
-  active: Boolean(data.active ?? false),
-  featured: Boolean(data.featured ?? false),
-
-  carryOnText: String(data.carryOnText ?? "7kg"),
-  checkedBaggageText: String(data.checkedBaggageText ?? "20kg"),
-  refundPolicy: String(
-    data.refundPolicy ??
-      "Hoàn Bảo lưu định danh: Thu phí hoàn; Thông báo trước khởi hành 24 tiếng; Bảo lưu tiền vé trong tối đa 01 năm kể từ ngày khởi hành"
-  ),
-  changePolicy: String(
-    data.changePolicy ??
-      "Thay đổi chuyến bay: Miễn phí thay đổi; Thu chênh lệch giá vé (nếu có); Thông báo trước khởi hành 03 tiếng"
-  ),
-  renamePolicy: String(
-    data.renamePolicy ?? "Đổi tên hành khách: Không áp dụng"
-  ),
-  fromAirportName: String(
-    data.fromAirportName ?? "Sân bay quốc tế Tân Sơn Nhất"
-  ),
-  toAirportName: String(
-    data.toAirportName ?? "Sân bay quốc tế Nội Bài"
-  ),
-});
+          setFlight({
+            id: String(data.id ?? docSnap.id),
+            fromCode: String(data.fromCode ?? ""),
+            fromLabel: String(data.fromLabel ?? ""),
+            toCode: String(data.toCode ?? ""),
+            toLabel: String(data.toLabel ?? ""),
+            departDate: String(data.departDate ?? ""),
+            tripType: String(data.tripType ?? "oneway"),
+            airline: String(data.airline ?? ""),
+            airlineCode: String(data.airlineCode ?? ""),
+            airlineLogo: String(data.airlineLogo ?? ""),
+            flightNumber: String(data.flightNumber ?? ""),
+            aircraft: String(data.aircraft ?? ""),
+            departTime: String(data.departTime ?? ""),
+            arriveTime: String(data.arriveTime ?? ""),
+            durationText: String(data.durationText ?? ""),
+            stopsText: String(data.stopsText ?? ""),
+            cabin: String(data.cabin ?? ""),
+            price: Number(data.price ?? 0),
+            seatsLeft: Number(data.seatsLeft ?? 0),
+            baggageText: String(data.baggageText ?? ""),
+            promoText: String(data.promoText ?? ""),
+            active: Boolean(data.active ?? false),
+            featured: Boolean(data.featured ?? false),
+            carryOnText: String(data.carryOnText ?? "7kg"),
+            checkedBaggageText: String(data.checkedBaggageText ?? "20kg"),
+            refundPolicy: String(
+              data.refundPolicy ??
+                "Hoàn Bảo lưu định danh: Thu phí hoàn; Thông báo trước khởi hành 24 tiếng; Bảo lưu tiền vé trong tối đa 01 năm kể từ ngày khởi hành"
+            ),
+            changePolicy: String(
+              data.changePolicy ??
+                "Thay đổi chuyến bay: Miễn phí thay đổi; Thu chênh lệch giá vé (nếu có); Thông báo trước khởi hành 03 tiếng"
+            ),
+            renamePolicy: String(
+              data.renamePolicy ?? "Đổi tên hành khách: Không áp dụng"
+            ),
+            fromAirportName: String(
+              data.fromAirportName ?? "Sân bay quốc tế Tân Sơn Nhất"
+            ),
+            toAirportName: String(
+              data.toAirportName ?? "Sân bay quốc tế Nội Bài"
+            ),
+          });
         } else {
           setFlight(null);
         }
@@ -325,7 +324,8 @@ export default function FlightBookingPage() {
           <span className="mr-2 text-[#e11a8c]">⏰</span>
           Hãy nhanh tay! Giá có thể thay đổi trong thời gian ngắn. Thời gian hoàn tất thanh toán{" "}
           <span className="font-bold text-[#e11a8c]">
-            {String(minuteLeft).padStart(2, "0")}:{String(secondLeft).padStart(2, "0")}
+            {String(minuteLeft).padStart(2, "0")}:
+            {String(secondLeft).padStart(2, "0")}
           </span>
         </div>
       </section>
@@ -399,7 +399,10 @@ export default function FlightBookingPage() {
                             errors.birth ? "border-[#ff4d4f]" : "border-[#dddddd]"
                           }`}
                         />
-                        <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]" size={20} />
+                        <CalendarDays
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]"
+                          size={20}
+                        />
                       </div>
 
                       <div className="relative">
@@ -411,7 +414,10 @@ export default function FlightBookingPage() {
                             errors.birth ? "border-[#ff4d4f]" : "border-[#dddddd]"
                           }`}
                         />
-                        <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]" size={20} />
+                        <CalendarDays
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]"
+                          size={20}
+                        />
                       </div>
 
                       <div className="relative">
@@ -423,58 +429,50 @@ export default function FlightBookingPage() {
                             errors.birth ? "border-[#ff4d4f]" : "border-[#dddddd]"
                           }`}
                         />
-                        <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]" size={20} />
+                        <CalendarDays
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa]"
+                          size={20}
+                        />
                       </div>
                     </div>
                     {errors.birth ? (
-                      <div className="mt-2 text-[15px] text-[#ff4d4f]">{errors.birth}</div>
+                      <div className="mt-1 text-[14px] text-[#ff4d4f]">{errors.birth}</div>
                     ) : null}
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-[18px]">
-                      <span className="text-[#ff4d4f]">*</span> Quốc tịch
+                    <label className="mb-2 block text-[18px]">Quốc tịch</label>
+                    <input
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
+                      className="h-[52px] w-full rounded-[12px] border border-[#dddddd] px-4 text-[18px] outline-none"
+                    />
+                  </div>
+
+                  <div className="col-span-2 mt-2">
+                    <label className="flex items-center gap-3 text-[18px]">
+                      <input
+                        type="checkbox"
+                        checked={isContactPassenger}
+                        onChange={(e) => setIsContactPassenger(e.target.checked)}
+                        className="h-5 w-5"
+                      />
+                      <span>Đồng thời là người liên hệ</span>
                     </label>
-                    <div className="relative">
-                      <select
-                        value={nationality}
-                        onChange={(e) => setNationality(e.target.value)}
-                        className="h-[52px] w-full rounded-[12px] border border-[#dddddd] px-4 text-[18px] outline-none"
-                      >
-                        <option>Việt Nam</option>
-                        <option>Hàn Quốc</option>
-                        <option>Nhật Bản</option>
-                        <option>Mỹ</option>
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#999]" />
-                    </div>
                   </div>
                 </div>
-
-                <label className="mt-4 flex items-center gap-3 text-[17px]">
-                  <input
-                    type="checkbox"
-                    checked={isContactPassenger}
-                    onChange={(e) => setIsContactPassenger(e.target.checked)}
-                    className="h-5 w-5 accent-[#e11a8c]"
-                  />
-                  <span>Thông tin hành khách là thông tin liên hệ</span>
-                </label>
               </div>
             </div>
 
             <div className="overflow-hidden rounded-[4px] border border-[#efefef] bg-white">
-              <div className="border-b border-[#efefef] px-5 py-4">
-                <div className="text-[22px] font-bold">Thông tin liên hệ</div>
-                <div className="mt-2 text-[18px] text-[#555]">
-                  Mã đặt chỗ sẽ được gửi theo thông tin liên hệ dưới đây
-                </div>
+              <div className="border-b border-[#efefef] px-5 py-4 text-[22px] font-bold">
+                Thông tin liên hệ
               </div>
 
-              <div className="grid grid-cols-2 gap-x-4 gap-y-4 px-5 py-5">
-                <div className="col-span-2">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4 px-5 py-5">
+                <div>
                   <label className="mb-2 block text-[18px]">
-                    <span className="text-[#ff4d4f]">*</span> Họ và tên (vd: Le Van An)
+                    <span className="text-[#ff4d4f]">*</span> Họ tên liên hệ
                   </label>
                   <input
                     value={contactName}
@@ -489,24 +487,24 @@ export default function FlightBookingPage() {
                   <label className="mb-2 block text-[18px]">
                     <span className="text-[#ff4d4f]">*</span> Số điện thoại
                   </label>
-                  <div className="flex h-[52px] overflow-hidden rounded-[12px] border border-[#dddddd]">
+                  <div className="grid grid-cols-[110px_1fr] gap-3">
                     <select
                       value={phonePrefix}
                       onChange={(e) => setPhonePrefix(e.target.value)}
-                      className="w-[88px] border-r border-[#dddddd] px-3 text-[18px] outline-none"
+                      className="h-[52px] rounded-[12px] border border-[#dddddd] px-4 text-[18px] outline-none"
                     >
-                      <option>+84</option>
-                      <option>+82</option>
-                      <option>+81</option>
+                      <option value="+84">+84</option>
+                      <option value="+1">+1</option>
+                      <option value="+81">+81</option>
                     </select>
+
                     <input
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="flex-1 px-4 text-[18px] outline-none"
+                      className={`h-[52px] w-full rounded-[12px] border px-4 text-[18px] outline-none ${
+                        errors.phoneNumber ? "border-[#ff4d4f]" : "border-[#dddddd]"
+                      }`}
                     />
-                  </div>
-                  <div className="mt-1 text-[14px] text-[#999]">
-                    Chọn mã quốc gia và nhập số di động
                   </div>
                 </div>
 
@@ -521,9 +519,6 @@ export default function FlightBookingPage() {
                       errors.email ? "border-[#ff4d4f]" : "border-[#dddddd]"
                     }`}
                   />
-                  <div className="mt-1 text-[14px] text-[#999]">
-                    Vd: email@example.com
-                  </div>
                 </div>
 
                 <div className="col-span-2">
@@ -680,14 +675,14 @@ export default function FlightBookingPage() {
               </div>
 
               <div className="mt-5 border-t border-[#e7e7e7] pt-4 text-center">
-  <button
-    type="button"
-    onClick={() => setShowFlightDetail(true)}
-    className="text-[18px] text-[#1677ff] hover:underline"
-  >
-    Xem chi tiết
-  </button>
-</div>
+                <button
+                  type="button"
+                  onClick={() => setShowFlightDetail(true)}
+                  className="text-[18px] text-[#1677ff] hover:underline"
+                >
+                  Xem chi tiết
+                </button>
+              </div>
             </div>
 
             <div className="rounded-[4px] border border-[#efefef] bg-white">
@@ -748,188 +743,207 @@ export default function FlightBookingPage() {
         </div>
       </section>
 
-      
-{showFlightDetail ? (
-  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-[rgba(0,0,0,0.35)] px-4">
-    <div className="relative w-full max-w-[515px] max-h-[72vh] overflow-y-auto rounded-[10px] bg-white shadow-[0_18px_50px_rgba(0,0,0,0.2)]">
-      <button
-        type="button"
-        onClick={() => setShowFlightDetail(false)}
-        className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#6b7280] shadow-sm transition hover:bg-[#f3f4f6] hover:text-[#111827]"
-        aria-label="Đóng popup"
-      >
-        <X size={18} strokeWidth={2.5} />
-      </button>
+      {showFlightDetail ? (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-[rgba(0,0,0,0.35)] px-4">
+          <div className="relative max-h-[72vh] w-full max-w-[515px] overflow-y-auto rounded-[10px] bg-white shadow-[0_18px_50px_rgba(0,0,0,0.2)]">
+            <button
+              type="button"
+              onClick={() => setShowFlightDetail(false)}
+              className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#6b7280] shadow-sm transition hover:bg-[#f3f4f6] hover:text-[#111827]"
+              aria-label="Đóng popup"
+            >
+              <X size={18} strokeWidth={2.5} />
+            </button>
 
-      <div className="px-5 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-5">
-        <h3 className="text-[15px] font-semibold text-[#1f2937]">
-          Chi tiết chuyến bay
-        </h3>
+            <div className="px-5 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-5">
+              <h3 className="text-[15px] font-semibold text-[#1f2937]">
+                Chi tiết chuyến bay
+              </h3>
 
-        <div className="mt-4 text-[24px] font-semibold leading-none text-[#1f2937]">
-          {flight.fromCode} <span className="mx-1">→</span> {flight.toCode}
+              <div className="mt-4 text-[24px] font-semibold leading-none text-[#1f2937]">
+                {flight.fromCode} <span className="mx-1">→</span> {flight.toCode}
+              </div>
+
+              <div className="mt-4 h-[2px] w-[160px] rounded-full bg-[#ec168c]" />
+
+              <div className="mt-6 grid grid-cols-[96px_28px_1fr] gap-x-4">
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <div className="text-[14px] font-semibold leading-none text-[#1f2937]">
+                      {flight.departTime}
+                    </div>
+                    <div className="mt-2 text-[12px] leading-none text-[#9ca3af]">
+                      {flight.departDate
+                        ? new Date(flight.departDate).toLocaleDateString("vi-VN")
+                        : ""}
+                    </div>
+                  </div>
+
+                  <div className="py-6 text-[13px] font-medium leading-none text-[#9ca3af]">
+                    {flight.durationText}
+                  </div>
+
+                  <div>
+                    <div className="text-[14px] font-semibold leading-none text-[#1f2937]">
+                      {flight.arriveTime}
+                    </div>
+                    <div className="mt-2 text-[12px] leading-none text-[#9ca3af]">
+                      {flight.departDate
+                        ? new Date(flight.departDate).toLocaleDateString("vi-VN")
+                        : ""}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative flex min-h-full justify-center">
+                  <Plane
+                    size={15}
+                    strokeWidth={2}
+                    className="absolute left-1/2 top-[2px] -translate-x-1/2 text-[#ec168c]"
+                  />
+                  <div className="absolute bottom-[14px] top-[20px] left-1/2 w-[2px] -translate-x-1/2 rounded-full bg-[#ec168c]" />
+                  <div className="absolute bottom-[2px] left-1/2 h-[10px] w-[10px] -translate-x-1/2 rounded-[2px] bg-[#ec168c]" />
+                </div>
+
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <div className="text-[14px] font-semibold leading-[1.35] text-[#1f2937]">
+                      {getAirportName(flight.fromLabel, flight.fromCode)} ({flight.fromCode})
+                    </div>
+                    <div className="mt-1 text-[11px] leading-[1.4] text-[#9ca3af]">
+                      {flight.fromAirportName ||
+                        `Sân bay quốc tế ${getAirportName(flight.fromLabel, flight.fromCode)}`}
+                    </div>
+
+                    <div className="mt-4 flex items-center gap-3">
+                      <img
+                        src={flight.airlineLogo || "/airlines/default.png"}
+                        alt={flight.airline}
+                        className="h-[28px] w-[56px] object-contain object-left"
+                      />
+                      <div className="leading-tight">
+                        <div className="text-[13px] font-semibold text-[#1f2937]">
+                          {flight.airline}
+                        </div>
+                        <div className="mt-[2px] text-[13px] font-semibold text-[#ec168c]">
+                          {flight.flightNumber}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-3 text-[13px] leading-[1.55] text-[#6b7280]">
+                      <div className="flex items-start gap-2.5">
+                        <BriefcaseBusiness
+                          size={15}
+                          strokeWidth={2}
+                          className="mt-[2px] shrink-0 text-[#6b7280]"
+                        />
+                        <div>
+                          Hành lý xách tay:{" "}
+                          <span className="font-semibold text-[#1f2937]">
+                            {flight.carryOnText || "7kg"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <BriefcaseBusiness
+                          size={15}
+                          strokeWidth={2}
+                          className="mt-[2px] shrink-0 text-[#6b7280]"
+                        />
+                        <div>
+                          Hành lý ký gửi:{" "}
+                          <span className="font-semibold text-[#1f2937]">
+                            {flight.checkedBaggageText || "20kg"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <CircleSlash2
+                          size={15}
+                          strokeWidth={2}
+                          className="mt-[2px] shrink-0 text-[#6b7280]"
+                        />
+                        <div>
+                          Hoàn/Bảo lưu định danh:{" "}
+                          <span className="text-[#4b5563]">
+                            {flight.refundPolicy ||
+                              "Thu phí hoàn; Thông báo trước khởi hành 24 tiếng; Bảo lưu tiền vé tối đa 01 năm kể từ ngày khởi hành"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <CircleSlash2
+                          size={15}
+                          strokeWidth={2}
+                          className="mt-[2px] shrink-0 text-[#6b7280]"
+                        />
+                        <div>
+                          Thay đổi chuyến bay:{" "}
+                          <span className="text-[#4b5563]">
+                            {flight.changePolicy ||
+                              "Miễn phí thay đổi; Thu chênh lệch giá vé (nếu có); Thông báo trước khởi hành 03 tiếng"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <CircleSlash2
+                          size={15}
+                          strokeWidth={2}
+                          className="mt-[2px] shrink-0 text-[#6b7280]"
+                        />
+                        <div>
+                          Đổi tên hành khách:{" "}
+                          <span className="text-[#4b5563]">
+                            {flight.renamePolicy || "Không áp dụng"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-6">
+                    <div className="text-[14px] font-semibold leading-[1.35] text-[#1f2937]">
+                      {getAirportName(flight.toLabel, flight.toCode)} ({flight.toCode})
+                    </div>
+                    <div className="mt-1 text-[11px] leading-[1.4] text-[#9ca3af]">
+                      {flight.toAirportName ||
+                        `Sân bay quốc tế ${getAirportName(flight.toLabel, flight.toCode)}`}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="mt-4 h-[2px] w-[160px] rounded-full bg-[#ec168c]" />
-
-        <div className="mt-6 grid grid-cols-[96px_28px_1fr] gap-x-4">
-          <div className="flex flex-col justify-between">
-            <div>
-              <div className="text-[14px] font-semibold leading-none text-[#1f2937]">
-                {flight.departTime}
-              </div>
-              <div className="mt-2 text-[12px] leading-none text-[#9ca3af]">
-                {flight.departDate
-                  ? new Date(flight.departDate).toLocaleDateString("vi-VN")
-                  : ""}
-              </div>
-            </div>
-
-            <div className="py-6 text-[13px] font-medium leading-none text-[#9ca3af]">
-              {flight.durationText}
-            </div>
-
-            <div>
-              <div className="text-[14px] font-semibold leading-none text-[#1f2937]">
-                {flight.arriveTime}
-              </div>
-              <div className="mt-2 text-[12px] leading-none text-[#9ca3af]">
-  {flight.departDate
-    ? new Date(flight.departDate).toLocaleDateString("vi-VN")
-    : ""}
-</div>
-            </div>
-          </div>
-
-          <div className="relative flex min-h-full justify-center">
-            <Plane
-              size={15}
-              strokeWidth={2}
-              className="absolute top-[2px] left-1/2 -translate-x-1/2 text-[#ec168c]"
-            />
-            <div className="absolute top-[20px] bottom-[14px] left-1/2 w-[2px] -translate-x-1/2 rounded-full bg-[#ec168c]" />
-            <div className="absolute bottom-[2px] left-1/2 h-[10px] w-[10px] -translate-x-1/2 rounded-[2px] bg-[#ec168c]" />
-          </div>
-
-          <div className="flex flex-col justify-between">
-            <div>
-              <div className="text-[14px] font-semibold leading-[1.35] text-[#1f2937]">
-                {getAirportName(flight.fromLabel, flight.fromCode)} ({flight.fromCode})
-              </div>
-              <div className="mt-1 text-[11px] leading-[1.4] text-[#9ca3af]">
-                {flight.fromAirportName ||
-                  `Sân bay quốc tế ${getAirportName(flight.fromLabel, flight.fromCode)}`}
-              </div>
-
-              <div className="mt-4 flex items-center gap-3">
-                <img
-                  src={flight.airlineLogo || "/airlines/default.png"}
-                  alt={flight.airline}
-                  className="h-[28px] w-[56px] object-contain object-left"
-                />
-                <div className="leading-tight">
-                  <div className="text-[13px] font-semibold text-[#1f2937]">
-                    {flight.airline}
-                  </div>
-                  <div className="mt-[2px] text-[13px] font-semibold text-[#ec168c]">
-                    {flight.flightNumber}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-3 text-[13px] leading-[1.55] text-[#6b7280]">
-                <div className="flex items-start gap-2.5">
-                  <BriefcaseBusiness
-                    size={15}
-                    strokeWidth={2}
-                    className="mt-[2px] shrink-0 text-[#6b7280]"
-                  />
-                  <div>
-                    Hành lý xách tay:{" "}
-                    <span className="font-semibold text-[#1f2937]">
-                      {flight.carryOnText || "7kg"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <BriefcaseBusiness
-                    size={15}
-                    strokeWidth={2}
-                    className="mt-[2px] shrink-0 text-[#6b7280]"
-                  />
-                  <div>
-                    Hành lý ký gửi:{" "}
-                    <span className="font-semibold text-[#1f2937]">
-                      {flight.checkedBaggageText || "20kg"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <CircleSlash2
-                    size={15}
-                    strokeWidth={2}
-                    className="mt-[2px] shrink-0 text-[#6b7280]"
-                  />
-                  <div>
-                    Hoàn/Bảo lưu định danh:{" "}
-                    <span className="text-[#4b5563]">
-                      {flight.refundPolicy ||
-                        "Thu phí hoàn; Thông báo trước khởi hành 24 tiếng; Bảo lưu tiền vé tối đa 01 năm kể từ ngày khởi hành"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <CircleSlash2
-                    size={15}
-                    strokeWidth={2}
-                    className="mt-[2px] shrink-0 text-[#6b7280]"
-                  />
-                  <div>
-                    Thay đổi chuyến bay:{" "}
-                    <span className="text-[#4b5563]">
-                      {flight.changePolicy ||
-                        "Miễn phí thay đổi; Thu chênh lệch giá vé (nếu có); Thông báo trước khởi hành 03 tiếng"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <CircleSlash2
-                    size={15}
-                    strokeWidth={2}
-                    className="mt-[2px] shrink-0 text-[#6b7280]"
-                  />
-                  <div>
-                    Đổi tên hành khách:{" "}
-                    <span className="text-[#4b5563]">
-                      {flight.renamePolicy || "Không áp dụng"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-6">
-              <div className="text-[14px] font-semibold leading-[1.35] text-[#1f2937]">
-                {getAirportName(flight.toLabel, flight.toCode)} ({flight.toCode})
-              </div>
-              <div className="mt-1 text-[11px] leading-[1.4] text-[#9ca3af]">
-                {flight.toAirportName ||
-                  `Sân bay quốc tế ${getAirportName(flight.toLabel, flight.toCode)}`}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-) : null}
+      ) : null}
 
       <FloatingContact />
       <Footer />
     </main>
+  );
+}
+
+export default function FlightBookingPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-white text-[#333]">
+          <HeaderTop />
+          <MainHeader />
+          <div className="mx-auto max-w-[1280px] px-4 py-16 text-[22px]">
+            Đang tải thông tin đặt vé...
+          </div>
+          <FloatingContact />
+          <Footer />
+        </main>
+      }
+    >
+      <FlightBookingContent />
+    </Suspense>
   );
 }
