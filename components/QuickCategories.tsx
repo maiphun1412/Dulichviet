@@ -19,6 +19,7 @@ type SubCategory = {
   label: string;
   icon: string;
   active?: boolean;
+  href?: string;
 };
 
 type Option = {
@@ -74,12 +75,31 @@ const mainCategories: MainCategory[] = [
 ];
 
 const subCategories: SubCategory[] = [
-  { id: 1, label: "Tour Doanh Nghiệp", icon: "/trangchu/sub1.png" },
-  { id: 2, label: "Du lịch Hành Hương", icon: "/trangchu/sub2.png" },
-  { id: 3, label: "Tour Hoa Anh Đào", icon: "/trangchu/sub3.png" },
-  { id: 4, label: "Du lịch Mùa Đông", icon: "/trangchu/sub4.png" },
-  { id: 5, label: "Tour Hè 2026", icon: "/trangchu/sub5.png", active: true },
-  { id: 6, label: "Tour Lễ 30/4", icon: "/trangchu/sub6.png" },
+  {
+    id: 1,
+    label: "Tour Doanh Nghiệp",
+    icon: "/trangchu/sub1.png",
+    href: "/tour-doanh-nghiep",
+  },
+  {
+    id: 2,
+    label: "Du lịch hành hương",
+    icon: "/trangchu/sub2.png",
+    href: "/du-lich-hanh-huong",
+  },
+  {
+    id: 5,
+    label: "Tour Hè 2026",
+    icon: "/trangchu/sub5.png",
+    href: "/tour-he-2026",
+    active: true,
+  },
+  {
+    id: 6,
+    label: "Tour lễ 30-4",
+    icon: "/trangchu/sub6.png",
+    href: "/tour-le-30-4",
+  },
 ];
 
 const domesticDestinations: Option[] = [
@@ -273,13 +293,16 @@ export default function QuickCategories() {
       <div className="relative z-40 border-t border-[#e2e2e2] bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-8 lg:px-8">
           <div className="overflow-x-auto">
-            <div className="grid min-w-[1180px] grid-cols-6">
+            <div className="grid min-w-[900px] grid-cols-4 justify-items-center">
               {subCategories.map((item) => (
-                <a
-                  key={item.id}
-                  href="#"
-                  className="flex flex-col items-center justify-start gap-3 px-3 text-center"
-                >
+                <button
+  key={item.id}
+  type="button"
+  onClick={() => {
+    if (item.href) router.push(item.href);
+  }}
+  className="flex flex-col items-center justify-start gap-3 px-3 text-center"
+>
                   <img
                     src={item.icon}
                     alt={item.label}
@@ -292,7 +315,7 @@ export default function QuickCategories() {
                   >
                     {item.label}
                   </span>
-                </a>
+                </button>
               ))}
             </div>
           </div>

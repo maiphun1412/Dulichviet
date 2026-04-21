@@ -13,6 +13,7 @@ import {
   type VisaPostItem,
   type VisaServicePage,
 } from "@/lib/visa-data";
+import HeaderTop from "@/components/HeaderTop";
 
 function VisaStars({ count }: { count: number }) {
   return (
@@ -255,6 +256,7 @@ const handleSearch = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white">
+      
         <MainHeader />
         <div className="mx-auto max-w-[1085px] px-4 py-10 text-[18px] text-[#666]">
           Đang tải dữ liệu visa...
@@ -280,6 +282,7 @@ const handleSearch = () => {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main className="overflow-hidden">

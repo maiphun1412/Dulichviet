@@ -8,6 +8,7 @@ import { ShieldCheck } from "lucide-react";
 import MainHeader from "../../components/MainHeader";
 import Footer from "../../components/Footer";
 import { formatAccessoryPrice } from "../../lib/accessory-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type CartItem = {
   id: string;
@@ -95,6 +96,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

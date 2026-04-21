@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { label: "TOUR", href: "/" },
@@ -58,51 +58,6 @@ const northTours = [
   "Du lịch Tây Bắc",
 ];
 
-const centralTours = [
-  "Du lịch Đà Nẵng",
-  "Du lịch Bình Thuận",
-  "Du lịch Buôn Ma Thuột",
-  "Du lịch Kon Tum",
-  "Du lịch Đà Lạt",
-  "Du lịch Đảo Bình Ba",
-  "Du lịch Đảo Bình Hưng",
-  "Du lịch Hội An",
-  "Du lịch Huế",
-  "Du lịch Nha Trang",
-  "Du lịch Ninh Chữ",
-  "Du lịch Ninh Thuận",
-  "Du lịch Phan Thiết",
-  "Du lịch Phú Yên",
-  "Du lịch Quy Nhơn",
-  "Du lịch Quảng Bình",
-  "Du lịch Quảng Nam",
-  "Du lịch Quảng Ngãi",
-  "Du lịch Bình Định",
-  "Du lịch Tây Nguyên",
-];
-
-const southTours = [
-  "Du lịch Tây Ninh",
-  "Du lịch Phú Quốc",
-  "Du lịch An Giang",
-  "Du lịch Bạc Liêu",
-  "Du lịch Bến Tre",
-  "Du lịch Cà Mau",
-  "Du lịch Cần Thơ",
-  "Du lịch Côn Đảo",
-  "Du lịch Châu Đốc",
-  "Du lịch Đồng Tháp",
-  "Du lịch Hà Tiên",
-  "Du lịch Kiên Giang",
-  "Du lịch Long An",
-  "Du lịch Nam Du",
-  "Du lịch Miền Tây",
-  "Du lịch Sóc Trăng",
-  "Du lịch Tiền Giang",
-  "Du lịch Vũng Tàu",
-  "Du lịch Sài Gòn",
-];
-
 const holidayTours = [
   "Tour lễ 2/9",
   "Tour du lịch mùa Thu",
@@ -118,10 +73,43 @@ const holidayTours = [
   "Tour Xe Giá Sốc",
 ];
 
+const quickMenuLinks = [
+  { label: "Tổ chức Teambuilding", href: "/tour-doanh-nghiep" },
+  { label: "Tour khách đoàn", href: "/tour-doanh-nghiep" },
+  { label: "Tour chuyên đề", href: "/tour-he-2026" },
+  { label: "Tour gia đình", href: "/tour-he-2026" },
+  { label: "Tour mới lạ", href: "/tour-he-2026" },
+  { label: "Tổng quan Cty", href: "/tong-quan" },
+  { label: "Thông tin liên hệ", href: "/lien-he" },
+  
+  { label: "Tuyển dụng Du Lịch", href: "/tin-tuc" },
+  { label: "Giới thiệu", href: "/tong-quan" },
+];
+
 export default function MainHeader() {
   const pathname = usePathname();
+
   const [showTourMenu, setShowTourMenu] = useState(false);
+  const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [activeGroup, setActiveGroup] = useState("Du lịch trong nước");
+
+  const quickMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        quickMenuRef.current &&
+        !quickMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowQuickMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isActive = (href: string) => {
     if (href === "/ve-may-bay") {
@@ -187,7 +175,95 @@ export default function MainHeader() {
                       {item.label}
                     </Link>
 
-                    
+                    {showTourMenu && (
+                      <div className="absolute left-1/2 top-full z-40 w-[860px] -translate-x-1/2 border border-[#ececec] bg-white p-6 shadow-[0_16px_40px_rgba(0,0,0,0.15)]">
+                        <div className="grid grid-cols-[240px_1fr] gap-6">
+                          <div className="border-r border-[#ededed] pr-4">
+                            {tourGroups.map((group) => (
+                              <button
+                                key={group.title}
+                                type="button"
+                                onMouseEnter={() => setActiveGroup(group.title)}
+                                className={`block w-full px-3 py-3 text-left text-[15px] font-medium transition ${
+                                  activeGroup === group.title
+                                    ? "bg-[#fdf0f7] text-[#f0178d]"
+                                    : "text-[#4d4d4d] hover:bg-[#fafafa]"
+                                }`}
+                              >
+                                {group.title}
+                              </button>
+                            ))}
+                          </div>
+
+                          <div>
+                            {activeGroup === "Du lịch trong nước" && (
+                              <div className="grid grid-cols-3 gap-6">
+                                <div>
+                                  <div className="mb-3 text-[15px] font-bold text-[#f0178d]">
+                                    Miền Bắc
+                                  </div>
+                                  <div className="space-y-2">
+                                    {northTours.map((item) => (
+                                      <div
+                                        key={item}
+                                        className="text-[14px] text-[#4d4d4d]"
+                                      >
+                                        {item}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <div className="mb-3 text-[15px] font-bold text-[#f0178d]">
+                                    Dịp lễ - mùa
+                                  </div>
+                                  <div className="space-y-2">
+                                    {holidayTours.map((item) => (
+                                      <div
+                                        key={item}
+                                        className="text-[14px] text-[#4d4d4d]"
+                                      >
+                                        {item}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <div className="mb-3 text-[15px] font-bold text-[#f0178d]">
+                                    Nổi bật
+                                  </div>
+                                  <div className="space-y-2 text-[14px] text-[#4d4d4d]">
+                                    <div>Du lịch Phú Quốc</div>
+                                    <div>Du lịch Đà Lạt</div>
+                                    <div>Du lịch Đà Nẵng</div>
+                                    <div>Du lịch Nha Trang</div>
+                                    <div>Du lịch Côn Đảo</div>
+                                    <div>Du lịch Miền Tây</div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeGroup !== "Du lịch trong nước" && (
+                              <div className="grid grid-cols-2 gap-4">
+                                {tourGroups
+                                  .find((group) => group.title === activeGroup)
+                                  ?.items.map((item) => (
+                                    <div
+                                      key={item}
+                                      className="rounded-[6px] border border-[#efefef] px-4 py-3 text-[14px] text-[#4d4d4d]"
+                                    >
+                                      {item}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               }
@@ -208,12 +284,30 @@ export default function MainHeader() {
             })}
           </nav>
 
-          <button
-            type="button"
-            className="flex h-12 w-12 shrink-0 items-center justify-center text-[#666]"
-          >
-            <Menu size={42} strokeWidth={1.8} />
-          </button>
+          <div ref={quickMenuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setShowQuickMenu((prev) => !prev)}
+              className="flex h-12 w-12 shrink-0 items-center justify-center text-[#666]"
+            >
+              <Menu size={42} strokeWidth={1.8} />
+            </button>
+
+            {showQuickMenu && (
+              <div className="absolute right-0 top-[56px] z-50 w-[250px] overflow-hidden bg-[#7d7d7d] text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+                {quickMenuLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setShowQuickMenu(false)}
+                    className="block px-5 py-3 text-[15px] transition hover:bg-[#6c6c6c]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

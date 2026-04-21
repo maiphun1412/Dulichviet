@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "../../../lib/firebase";
+import { addToCart } from "../../../lib/cart";
 import { useParams, useRouter  } from "next/navigation";
 import {
   ArrowRightLeft,
@@ -23,21 +25,10 @@ import {
   type TravelAccessoryItem,
   type AccessorySpecRow,
 } from "../../../lib/accessory-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type TabKey = "description" | "technical";
 
-type CartItem = {
-  id: string;
-  slug: string;
-  title: string;
-  brand: string;
-  price: number;
-  oldPrice: number;
-  quantity: number;
-  image: string;
-  color: string;
-  size: string;
-};
 
 function RelatedProductCard({ item }: { item: TravelAccessoryItem }) {
   return (
@@ -105,7 +96,18 @@ export default function AccessoryDetailPage() {
   const [quantity, setQuantity] = useState(1);
 
   const [showAddedModal, setShowAddedModal] = useState(false);
-  const [addedItem, setAddedItem] = useState<CartItem | null>(null);
+const [addedItem, setAddedItem] = useState<{
+  productId: string;
+  slug?: string;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
+  brand?: string;
+  oldPrice?: number;
+  color?: string;
+  size?: string;
+} | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -169,100 +171,68 @@ export default function AccessoryDetailPage() {
     return buildAccessoryTechnicalSpecs(product);
   }, [product]);
 
-  function handleAddToCart() {
-    if (!product) return;
-
-    const cartItem: CartItem = {
-      id: product.id,
-      slug: product.slug,
-      title: product.title,
-      brand: product.brand,
-      price: product.price,
-      oldPrice: product.oldPrice,
-      quantity,
-      image:
-        selectedImage ||
-        product.mainImage ||
-        product.thumbnails?.[0] ||
-        "/placeholder.png",
-      color: selectedColor,
-      size: selectedSize,
-    };
-
-    const cartKey = "travel_accessory_cart";
-    const existingCartRaw = localStorage.getItem(cartKey);
-    const existingCart: CartItem[] = existingCartRaw
-      ? JSON.parse(existingCartRaw)
-      : [];
-
-    const foundIndex = existingCart.findIndex(
-      (item) =>
-        item.id === cartItem.id &&
-        item.color === cartItem.color &&
-        item.size === cartItem.size
-    );
-
-    if (foundIndex >= 0) {
-      existingCart[foundIndex].quantity += cartItem.quantity;
-    } else {
-      existingCart.push(cartItem);
-    }
-
-    localStorage.setItem(cartKey, JSON.stringify(existingCart));
-    window.dispatchEvent(new Event("storage"));
-
-    setAddedItem(cartItem);
-    setShowAddedModal(true);
-  }
-
-  function handleBuyNow() {
+async function handleAddToCart() {
   if (!product) return;
 
-  const cartItem: CartItem = {
-    id: product.id,
+  const cartItem = {
+    productId: product.id,
     slug: product.slug,
     title: product.title,
-    brand: product.brand,
-    price: product.price,
-    oldPrice: product.oldPrice,
-    quantity,
     image:
       selectedImage ||
       product.mainImage ||
       product.thumbnails?.[0] ||
       "/placeholder.png",
+    price: product.price,
+    quantity,
+    brand: product.brand,
+    oldPrice: product.oldPrice,
     color: selectedColor,
     size: selectedSize,
   };
 
-  const cartKey = "travel_accessory_cart";
-  const existingCartRaw = localStorage.getItem(cartKey);
-  const existingCart: CartItem[] = existingCartRaw
-    ? JSON.parse(existingCartRaw)
-    : [];
+  try {
+    await addToCart(cartItem, auth.currentUser?.uid ?? null);
 
-  const foundIndex = existingCart.findIndex(
-    (item) =>
-      item.id === cartItem.id &&
-      item.color === cartItem.color &&
-      item.size === cartItem.size
-  );
-
-  if (foundIndex >= 0) {
-    existingCart[foundIndex].quantity += cartItem.quantity;
-  } else {
-    existingCart.push(cartItem);
+    setAddedItem(cartItem);
+    setShowAddedModal(true);
+  } catch (error) {
+    console.error("Lỗi thêm vào giỏ hàng:", error);
   }
+}
 
-  localStorage.setItem(cartKey, JSON.stringify(existingCart));
-  window.dispatchEvent(new Event("storage"));
+  async function handleBuyNow() {
+  if (!product) return;
 
-  router.push("/thanh-toan");
+  const cartItem = {
+    productId: product.id,
+    slug: product.slug,
+    title: product.title,
+    image:
+      selectedImage ||
+      product.mainImage ||
+      product.thumbnails?.[0] ||
+      "/placeholder.png",
+    price: product.price,
+    quantity,
+    brand: product.brand,
+    oldPrice: product.oldPrice,
+    color: selectedColor,
+    size: selectedSize,
+  };
+
+  try {
+    await addToCart(cartItem, auth.currentUser?.uid ?? null);
+    router.push("/thanh-toan");
+  } catch (error) {
+    console.error("Lỗi mua ngay:", error);
+  }
 }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#fafafa]">
+         <HeaderTop />
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-10 text-[#666]">
           Đang tải chi tiết sản phẩm...
@@ -274,8 +244,9 @@ export default function AccessoryDetailPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#fafafa]">
-        <MainHeader />
+  <div className="min-h-screen bg-[#fafafa] text-[#222]">
+    <HeaderTop />
+    <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-10">
           <h1 className="text-[32px] font-bold text-[#243b63]">
             Không tìm thấy sản phẩm
@@ -683,11 +654,11 @@ export default function AccessoryDetailPage() {
                       {formatAccessoryPrice(addedItem.price)}
                     </span>
 
-                    {addedItem.oldPrice > 0 ? (
-                      <span className="text-[14px] text-[#9aa6b2] line-through">
-                        {formatAccessoryPrice(addedItem.oldPrice)}
-                      </span>
-                    ) : null}
+                    {(addedItem.oldPrice ?? 0) > 0 ? (
+  <span className="text-[14px] text-[#9aa6b2] line-through">
+    {formatAccessoryPrice(addedItem.oldPrice ?? 0)}
+  </span>
+) : null}
                   </div>
 
                   <div className="mt-3 text-[15px] text-[#4c5d77]">

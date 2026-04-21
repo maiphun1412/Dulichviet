@@ -24,6 +24,7 @@ import {
   type HotelRelatedItem,
   type HotelRoom,
 } from "@/lib/hotel-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type TabKey = "overview" | "detail" | "policy" | "note";
 
@@ -301,6 +302,8 @@ const router = useRouter();
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
+         <HeaderTop />
+        
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-16 text-center text-[18px] text-[#666]">
           Đang tải dữ liệu khách sạn...

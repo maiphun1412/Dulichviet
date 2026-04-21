@@ -20,6 +20,7 @@ import {
   getAllHotels,
   type HotelItem as BaseHotelItem,
 } from "@/lib/hotel-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type HotelItem = BaseHotelItem & {
   addressText?: string;
@@ -249,6 +250,7 @@ function HotelSearchContent() {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

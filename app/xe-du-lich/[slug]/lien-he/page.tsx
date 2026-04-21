@@ -8,6 +8,7 @@ import MainHeader from "@/components/MainHeader";
 import Footer from "@/components/Footer";
 import { getVisaPosts, type VisaPostItem } from "@/lib/visa-data";
 import { Mail, Phone, Smartphone, CalendarDays  } from "lucide-react";
+import HeaderTop from "@/components/HeaderTop";
 
 type ContactFormState = {
   fullName: string;
@@ -103,6 +104,7 @@ export default function VisaContactPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

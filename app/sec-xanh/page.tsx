@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import HeaderTop from "@/components/HeaderTop";
+import MainHeader from "@/components/MainHeader";
+import Footer from "@/components/Footer";
 
 type Benefit = {
   title: string;
@@ -110,9 +113,15 @@ const euLinks = [
   "Du lịch Nga",
 ];
 
+const banners = [
+  "/images/sec-xanh/1.webp",
+  "/images/sec-xanh/2.webp",
+];
+
 export default function SecXanhPage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string>("");
+  const [current, setCurrent] = useState(0);
 
   const selectedCard = useMemo(
     () => giftCards.find((item) => item.id === selectedId) ?? null,
@@ -128,77 +137,27 @@ export default function SecXanhPage() {
       console.error("Copy failed:", error);
     }
   };
-const banners = [
-  "/images/sec-xanh/1.webp",
-  "/images/sec-xanh/2.webp",
- 
-];
 
-const [current, setCurrent] = useState(0);
+  const nextBanner = () => {
+    setCurrent((prev) => (prev + 1) % banners.length);
+  };
 
-const nextBanner = () => {
-  setCurrent((prev) => (prev + 1) % banners.length);
-};
+  const prevBanner = () => {
+    setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+  };
 
-const prevBanner = () => {
-  setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
-};
+  const getPrevIndex = () => {
+    return (current - 1 + banners.length) % banners.length;
+  };
 
-const getPrevIndex = () => {
-  return (current - 1 + banners.length) % banners.length;
-};
-
-const getNextIndex = () => {
-  return (current + 1) % banners.length;
-};
+  const getNextIndex = () => {
+    return (current + 1) % banners.length;
+  };
 
   return (
     <main className="min-h-screen bg-[#f4f1ea] text-[#173b2f]">
-      {/* TOP BAR */}
-      <div className="bg-[#e50087] text-white">
-        <div className="mx-auto flex max-w-[1180px] items-center justify-between px-4 py-2 text-sm">
-          <div className="font-semibold">
-            Hotline: <span className="text-xl text-yellow-300">1900 1177</span>
-          </div>
-
-          <div className="flex items-center gap-5 text-[14px]">
-            <span>Phiếu góp ý</span>
-            <span>Tài khoản</span>
-            <span>Giỏ hàng</span>
-          </div>
-        </div>
-      </div>
-
-      {/* HEADER */}
-      <header className="bg-white shadow-sm">
-        <div className="mx-auto flex max-w-[1180px] items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="relative h-[56px] w-[190px]">
-              <Image
-                src="/images/sec-xanh/logo-dulichviet.png"
-                alt="Du Lịch Việt"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          <nav className="hidden items-center gap-8 text-[15px] font-medium text-[#30363c] lg:flex">
-            <a href="#">TOUR</a>
-            <a href="#">VÉ MÁY BAY</a>
-            <a href="#">KHÁCH SẠN</a>
-            <a href="#">DỊCH VỤ VISA</a>
-            <a href="#">THUÊ XE</a>
-            <a href="#">PHỤ KIỆN DU LỊCH</a>
-            <a href="#" className="text-[#173b2f]">
-              SÉC XANH
-            </a>
-            <a href="#">TIN TỨC</a>
-          </nav>
-
-          <button className="text-3xl text-[#4d4d4d]">☰</button>
-        </div>
-      </header>
+      <HeaderTop />
+      <MainHeader />
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-[#09663a]">
@@ -260,95 +219,90 @@ const getNextIndex = () => {
 
       {/* INTRO */}
       <section className="bg-white">
-  <div className="mx-auto max-w-[1180px] px-4 py-10 md:py-14">
-    <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-[#35b46d]">
-      Hệ sinh thái xanh
-    </p>
+        <div className="mx-auto max-w-[1180px] px-4 py-10 md:py-14">
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-[#35b46d]">
+            Hệ sinh thái xanh
+          </p>
 
-    <h2 className="text-4xl font-extrabold text-[#0d5435]">
-      Séc Xanh là gì?
-    </h2>
+          <h2 className="text-4xl font-extrabold text-[#0d5435]">
+            Séc Xanh là gì?
+          </h2>
 
-    <p className="mt-5 max-w-[1100px] text-[18px] leading-8 text-[#364a42]">
-      Séc Xanh định vị là một “giá trị tiêu dùng” đặc biệt được thiết kế dành
-      riêng trong Hệ Sinh Thái Xanh của Du Lịch Việt. Giải pháp này cho phép
-      khách hàng thanh toán và sử dụng linh hoạt nhiều dịch vụ cho mọi hành
-      trình. Thay vì phải lựa chọn riêng lẻ từng dịch vụ như tour, khách sạn,
-      vé máy bay,... Séc Xanh đóng vai trò là “cầu nối giá trị”, mang đến
-      trải nghiệm liền mạch, tiện lợi và tiết kiệm chi phí hơn.
-    </p>
-  </div>
-</section>
+          <p className="mt-5 max-w-[1100px] text-[18px] leading-8 text-[#364a42]">
+            Séc Xanh định vị là một “giá trị tiêu dùng” đặc biệt được thiết kế dành
+            riêng trong Hệ Sinh Thái Xanh của Du Lịch Việt. Giải pháp này cho phép
+            khách hàng thanh toán và sử dụng linh hoạt nhiều dịch vụ cho mọi hành
+            trình. Thay vì phải lựa chọn riêng lẻ từng dịch vụ như tour, khách sạn,
+            vé máy bay,... Séc Xanh đóng vai trò là “cầu nối giá trị”, mang đến
+            trải nghiệm liền mạch, tiện lợi và tiết kiệm chi phí hơn.
+          </p>
+        </div>
+      </section>
 
       {/* TAB + BANNER */}
-<section className="mx-auto max-w-[1180px] px-4">
-  <div className="mb-4 flex items-center gap-3">
-    <span className="text-xl">🎁</span>
-    <div>
-      <div className="text-[28px] font-bold text-[#173b2f]">
-        Quà Tặng Xanh
-      </div>
-      <div className="inline-flex rounded-full bg-[#0d5b39] px-4 py-1 text-sm font-semibold text-white">
-        Green Gift
-      </div>
-    </div>
-  </div>
+      <section className="mx-auto max-w-[1180px] px-4">
+        <div className="mb-4 flex items-center gap-3">
+          <span className="text-xl">🎁</span>
+          <div>
+            <div className="text-[28px] font-bold text-[#173b2f]">
+              Quà Tặng Xanh
+            </div>
+            <div className="inline-flex rounded-full bg-[#0d5b39] px-4 py-1 text-sm font-semibold text-white">
+              Green Gift
+            </div>
+          </div>
+        </div>
 
-  <div className="mb-10 h-[3px] w-full bg-[#d7e7dc]">
-    <div className="h-full w-[180px] bg-[#2ec97d]" />
-  </div>
+        <div className="mb-10 h-[3px] w-full bg-[#d7e7dc]">
+          <div className="h-full w-[180px] bg-[#2ec97d]" />
+        </div>
 
-  <div className="relative mx-auto mb-10 h-[220px] w-full max-w-[1120px] md:h-[290px]">
-    {/* Nút trái */}
-    <button
-      onClick={prevBanner}
-      className="absolute left-4 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-4xl text-[#5f5f5f] shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition hover:bg-white"
-    >
-      ‹
-    </button>
+        <div className="relative mx-auto mb-10 h-[220px] w-full max-w-[1120px] md:h-[290px]">
+          <button
+            onClick={prevBanner}
+            className="absolute left-4 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-4xl text-[#5f5f5f] shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition hover:bg-white"
+          >
+            ‹
+          </button>
 
-    {/* Nút phải */}
-    <button
-      onClick={nextBanner}
-      className="absolute right-4 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-4xl text-[#5f5f5f] shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition hover:bg-white"
-    >
-      ›
-    </button>
+          <button
+            onClick={nextBanner}
+            className="absolute right-4 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-4xl text-[#5f5f5f] shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition hover:bg-white"
+          >
+            ›
+          </button>
 
-    {/* Ảnh bên trái */}
-    <div className="absolute left-0 top-1/2 z-0 h-[86%] w-[22%] -translate-y-1/2 overflow-hidden rounded-[22px] opacity-55 blur-[2px]">
-      <Image
-        src={banners[getPrevIndex()]}
-        alt="Banner trước"
-        fill
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-[rgba(70,55,20,0.22)]" />
-    </div>
+          <div className="absolute left-0 top-1/2 z-0 h-[86%] w-[22%] -translate-y-1/2 overflow-hidden rounded-[22px] opacity-55 blur-[2px]">
+            <Image
+              src={banners[getPrevIndex()]}
+              alt="Banner trước"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-[rgba(70,55,20,0.22)]" />
+          </div>
 
-    {/* Ảnh chính giữa */}
-    <div className="absolute left-1/2 top-1/2 z-10 h-full w-[68%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[24px] shadow-[0_18px_40px_rgba(0,0,0,0.18)] transition-all duration-500">
-      <Image
-        key={banners[current]}
-        src={banners[current]}
-        alt="Banner Séc Xanh"
-        fill
-        className="object-cover"
-      />
-    </div>
+          <div className="absolute left-1/2 top-1/2 z-10 h-full w-[68%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[24px] shadow-[0_18px_40px_rgba(0,0,0,0.18)] transition-all duration-500">
+            <Image
+              key={banners[current]}
+              src={banners[current]}
+              alt="Banner Séc Xanh"
+              fill
+              className="object-cover"
+            />
+          </div>
 
-    {/* Ảnh bên phải */}
-    <div className="absolute right-0 top-1/2 z-0 h-[86%] w-[22%] -translate-y-1/2 overflow-hidden rounded-[22px] opacity-55 blur-[2px]">
-      <Image
-        src={banners[getNextIndex()]}
-        alt="Banner sau"
-        fill
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-[rgba(70,55,20,0.22)]" />
-    </div>
-  </div>
-</section>
+          <div className="absolute right-0 top-1/2 z-0 h-[86%] w-[22%] -translate-y-1/2 overflow-hidden rounded-[22px] opacity-55 blur-[2px]">
+            <Image
+              src={banners[getNextIndex()]}
+              alt="Banner sau"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-[rgba(70,55,20,0.22)]" />
+          </div>
+        </div>
+      </section>
 
       {/* DETAIL CARD */}
       <section className="mx-auto max-w-[1180px] px-4 py-8 md:py-10">
@@ -378,7 +332,7 @@ const getNextIndex = () => {
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-[36px] font-black tracking-[0.08em] text-[#0f5334]">
+                  <span className="text-[25px] font-black tracking-[0.08em] text-[#0f5334]">
                     {giftCards[0].code}
                   </span>
 
@@ -411,7 +365,7 @@ const getNextIndex = () => {
                   key={`${benefit.title}-${index}`}
                   className="min-h-[145px] rounded-[16px] border border-[#c9ddd1] bg-[#f4faf6] p-4"
                 >
-                  <h4 className="text-[24px] font-extrabold uppercase text-[#173b2f]">
+                  <h4 className="text-[20px] font-extrabold uppercase text-[#173b2f]">
                     {benefit.title}
                   </h4>
                   <p className="mt-2 text-[16px] leading-7 text-[#4d6259]">
@@ -449,45 +403,7 @@ const getNextIndex = () => {
         </div>
       </section>
 
-      {/* FOOTER LINKS */}
-      <section className="mx-auto max-w-[1180px] px-4 pb-14">
-        <div className="mb-7 h-[3px] w-full bg-[#ef1b8d]" />
-
-        <div className="grid gap-8 md:grid-cols-3">
-          <div>
-            <h4 className="mb-4 text-[26px] font-extrabold text-[#173b2f]">
-              Trong nước
-            </h4>
-            <div className="space-y-2 text-[17px] text-[#445a52]">
-              {domesticLinks.map((item) => (
-                <div key={item}>{item}</div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="mb-4 text-[26px] font-extrabold text-[#173b2f]">
-              Châu Á
-            </h4>
-            <div className="space-y-2 text-[17px] text-[#445a52]">
-              {asiaLinks.map((item) => (
-                <div key={item}>{item}</div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="mb-4 text-[26px] font-extrabold text-[#173b2f]">
-              Châu Âu - Úc - Mỹ
-            </h4>
-            <div className="space-y-2 text-[17px] text-[#445a52]">
-              {euLinks.map((item) => (
-                <div key={item}>{item}</div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* POPUP */}
       {selectedCard && (
@@ -514,7 +430,7 @@ const getNextIndex = () => {
             <div className="max-h-[calc(88vh-96px)] overflow-y-auto px-7 py-7">
               <div className="rounded-[22px] bg-[linear-gradient(135deg,#0d6b3f_0%,#0a5b36_100%)] p-6 text-white">
                 <div className="grid gap-5 md:grid-cols-[160px_1fr] md:items-center">
-                  <div className="text-[54px] font-black tracking-[0.05em] text-[#f2dc7a]">
+                  <div className="text-[32px] font-black tracking-[0.05em] text-[#f2dc7a]">
                     {selectedCard.code}
                   </div>
 
@@ -541,10 +457,10 @@ const getNextIndex = () => {
                     key={`${benefit.title}-popup-${index}`}
                     className="rounded-[16px] border border-[#d4e1d8] bg-[#f4faf6] p-4"
                   >
-                    <h5 className="text-[22px] font-extrabold uppercase text-[#173b2f]">
+                    <h5 className="text-[16px] font-extrabold uppercase text-[#173b2f]">
                       {benefit.title}
                     </h5>
-                    <p className="mt-2 text-[16px] leading-7 text-[#4d6259]">
+                    <p className="mt-2 text-[13px] leading-7 text-[#4d6259]">
                       {benefit.content}
                     </p>
                   </div>
@@ -560,6 +476,8 @@ const getNextIndex = () => {
           />
         </div>
       )}
+
+      <Footer />
     </main>
   );
 }

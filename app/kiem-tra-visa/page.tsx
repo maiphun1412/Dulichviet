@@ -4,6 +4,7 @@ import { Eye, Star } from "lucide-react";
 import Link from "next/link";
 import MainHeader from "@/components/MainHeader";
 import Footer from "@/components/Footer";
+import HeaderTop from "@/components/HeaderTop";
 
 const destinations = {
   "Trong nước": [
@@ -65,6 +66,7 @@ function RatingStars() {
 export default function KiemTraVisaPage() {
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

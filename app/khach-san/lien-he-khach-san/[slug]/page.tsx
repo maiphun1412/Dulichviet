@@ -9,6 +9,7 @@ import { Mail, Smartphone } from "lucide-react";
 import MainHeader from "@/components/MainHeader";
 import Footer from "@/components/Footer";
 import { getHotelBySlug, type HotelItem } from "@/lib/hotel-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type ContactFormState = {
   fullName: string;
@@ -97,6 +98,7 @@ export default function HotelContactPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
+          <HeaderTop />
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-16 text-center text-[18px] text-[#666]">
           Đang tải thông tin khách sạn...

@@ -1,5 +1,6 @@
 "use client";
-
+import { auth } from "@/lib/firebase";
+import { addToCart } from "@/lib/cart";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,50 +15,31 @@ import {
   type AccessoryPageData,
   type TravelAccessoryItem,
 } from "@/lib/accessory-data";
+import HeaderTop from "@/components/HeaderTop";
 
 function ProductCard({ item }: { item: TravelAccessoryItem }) {
   const router = useRouter();
 
-  function handleAddToCart() {
-    const cartKey = "travel_accessory_cart";
-
+  async function handleAddToCart() {
     const cartItem = {
-      id: item.id,
+      productId: item.id,
       slug: item.slug,
       title: item.title,
       brand: item.brand,
       price: item.price,
-      oldPrice: item.oldPrice,
+      oldPrice: item.oldPrice ?? 0,
       quantity: 1,
       image: item.mainImage || item.thumbnails?.[0] || "/placeholder.png",
       color: item.colors?.[0] || "",
       size: item.sizes?.[0] || "",
     };
 
-    let existingCart = [];
     try {
-      const raw = localStorage.getItem(cartKey);
-      existingCart = raw ? JSON.parse(raw) : [];
+      await addToCart(cartItem, auth.currentUser?.uid ?? null);
+      router.push("/gio-hang");
     } catch (error) {
-      existingCart = [];
+      console.error("Lỗi thêm vào giỏ hàng:", error);
     }
-
-    const foundIndex = existingCart.findIndex(
-      (product: any) =>
-        product.id === cartItem.id &&
-        product.color === cartItem.color &&
-        product.size === cartItem.size
-    );
-
-    if (foundIndex >= 0) {
-      existingCart[foundIndex].quantity += 1;
-    } else {
-      existingCart.push(cartItem);
-    }
-
-    localStorage.setItem(cartKey, JSON.stringify(existingCart));
-    window.dispatchEvent(new Event("storage"));
-    router.push("/gio-hang");
   }
 
   return (
@@ -213,6 +195,7 @@ const router = useRouter();
   if (loading) {
     return (
       <div className="min-h-screen bg-[#fafafa]">
+         
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-10 text-[#666]">
           Đang tải phụ kiện du lịch...
@@ -224,6 +207,7 @@ const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

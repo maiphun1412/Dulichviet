@@ -21,6 +21,7 @@ import {
   type CarPostItem,
   type CarServicePage,
 } from "@/lib/car-data";
+import HeaderTop from "@/components/HeaderTop";
 
 function StarRating({
   rating,
@@ -181,6 +182,7 @@ export default function XeDuLichPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
+         
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-10 text-[16px] text-[#666]">
           Đang tải dữ liệu xe du lịch...
@@ -192,6 +194,7 @@ export default function XeDuLichPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

@@ -13,6 +13,7 @@ export type TourItem = {
   price: string;
   countdown: string;
   section: string;
+  serviceType?: string;
   active: boolean;
 };
 
@@ -80,6 +81,7 @@ export async function getToursBySection(section: string): Promise<TourItem[]> {
         price: String(data.price ?? ""),
         countdown: String(data.countdown ?? ""),
         section: String(data.section ?? ""),
+        serviceType: String(data.serviceType ?? ""),
         active: Boolean(data.active ?? false),
       };
     });
@@ -111,6 +113,7 @@ export async function getTourBySlug(slug: string): Promise<TourDetail | null> {
       price: String(data.price ?? ""),
       countdown: String(data.countdown ?? ""),
       section: String(data.section ?? ""),
+      serviceType: String(data.serviceType ?? ""),
       active: Boolean(data.active ?? false),
 
       code: String(data.code ?? ""),
@@ -142,8 +145,7 @@ export async function getTourBySlug(slug: string): Promise<TourDetail | null> {
             airline: String(item?.airline ?? ""),
             price: String(item?.price ?? ""),
             seats: String(item?.seats ?? ""),
-            status:
-              item?.status === "Liên hệ" ? "Liên hệ" : "Book",
+            status: item?.status === "Liên hệ" ? "Liên hệ" : "Book",
           }))
         : [],
 
@@ -169,5 +171,50 @@ export async function getTourBySlug(slug: string): Promise<TourDetail | null> {
   } catch (error) {
     console.error("Lỗi lấy tour theo slug:", error);
     return null;
+  }
+}
+
+export async function getToursBySectionAndService(
+  section: string,
+  serviceType?: string
+): Promise<TourItem[]> {
+  try {
+    const q = serviceType
+      ? query(
+          collection(db, "tours"),
+          where("section", "==", section),
+          where("serviceType", "==", serviceType),
+          where("active", "==", true)
+        )
+      : query(
+          collection(db, "tours"),
+          where("section", "==", section),
+          where("active", "==", true)
+        );
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data();
+
+      return {
+        id: docSnap.id,
+        slug: String(data.slug ?? docSnap.id),
+        title: String(data.title ?? ""),
+        image: String(data.image ?? data.picture ?? ""),
+        departure: String(data.departure ?? ""),
+        duration: String(data.duration ?? ""),
+        date: String(data.date ?? ""),
+        seats: Number(data.seats ?? 0),
+        price: String(data.price ?? ""),
+        countdown: String(data.countdown ?? ""),
+        section: String(data.section ?? ""),
+        serviceType: String(data.serviceType ?? ""),
+        active: Boolean(data.active ?? false),
+      };
+    });
+  } catch (error) {
+    console.error("Lỗi lấy tours theo section + service:", error);
+    return [];
   }
 }

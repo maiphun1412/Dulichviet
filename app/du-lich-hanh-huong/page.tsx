@@ -9,13 +9,12 @@ import HeaderTop from "@/components/HeaderTop";
 import MainHeader from "../../components/MainHeader";
 import Footer from "../../components/Footer";
 import { formatAccessoryPrice } from "../../lib/accessory-data";
-import { auth } from "../../lib/firebase";
-import { watchAuth } from "../../lib/auth";
 import {
   getCart,
   updateCartItems,
   type CartItem as FirebaseCartItem,
 } from "../../lib/cart";
+import { auth } from "../../lib/firebase";
 
 type CartItem = FirebaseCartItem & {
   brand?: string;
@@ -29,18 +28,19 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(true);
 
-  async function loadCart(userUid?: string | null) {
+  const getCurrentUserUid = () => auth.currentUser?.uid ?? null;
+
+  async function loadCart() {
     try {
       setLoading(true);
-
-      const rawItems = await getCart(userUid ?? null);
+      const rawItems = await getCart(getCurrentUserUid());
 
       const normalized: CartItem[] = rawItems.map((item) => ({
         ...item,
-        brand: item.brand ?? "Phụ kiện du lịch",
-        oldPrice: item.oldPrice ?? 0,
-        color: item.color ?? "",
-        size: item.size ?? "",
+        brand: (item as CartItem).brand ?? "Phụ kiện du lịch",
+        oldPrice: (item as CartItem).oldPrice ?? 0,
+        color: (item as CartItem).color ?? "",
+        size: (item as CartItem).size ?? "",
         slug: item.slug ?? "",
       }));
 
@@ -55,12 +55,11 @@ export default function CartPage() {
 
   async function saveCart(nextCart: CartItem[]) {
     setCartItems(nextCart);
-    await updateCartItems(nextCart, auth.currentUser?.uid ?? null);
+    await updateCartItems(nextCart, getCurrentUserUid());
   }
 
   async function handleDecrease(index: number) {
     const nextCart = [...cartItems];
-
     if (nextCart[index].quantity > 1) {
       nextCart[index] = {
         ...nextCart[index],
@@ -85,23 +84,15 @@ export default function CartPage() {
   }
 
   useEffect(() => {
-    let mounted = true;
-
-    const unsub = watchAuth(async (user) => {
-      if (!mounted) return;
-      await loadCart(user?.uid ?? null);
-    });
+    loadCart();
 
     const handleCartUpdated = async () => {
-      if (!mounted) return;
-      await loadCart(auth.currentUser?.uid ?? null);
+      await loadCart();
     };
 
     window.addEventListener("cart-updated", handleCartUpdated);
 
     return () => {
-      mounted = false;
-      unsub();
       window.removeEventListener("cart-updated", handleCartUpdated);
     };
   }, []);
@@ -236,7 +227,6 @@ export default function CartPage() {
                             <div className="mt-1 text-[16px] font-bold text-[#243b63]">
                               {formatAccessoryPrice(item.price)}
                             </div>
-
                             {(item.oldPrice ?? 0) > 0 ? (
                               <div className="mt-1 text-[14px] text-[#9aa6b2] line-through">
                                 {formatAccessoryPrice(item.oldPrice ?? 0)}
@@ -256,11 +246,9 @@ export default function CartPage() {
                               >
                                 -
                               </button>
-
                               <div className="flex h-full min-w-[36px] items-center justify-center border-x border-[#dce3ec] px-3 text-[15px] text-[#243b63]">
                                 {item.quantity}
                               </div>
-
                               <button
                                 type="button"
                                 onClick={() => handleIncrease(index)}
@@ -320,7 +308,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-[#4c5d77]">Giảm giá:</span>
                   <span className="text-[#ff4d4f]">
-                    {formatAccessoryPrice(discount)}
+                    {formatAccessoryPrice(0)}
                   </span>
                 </div>
 

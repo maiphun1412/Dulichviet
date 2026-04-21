@@ -14,6 +14,7 @@ import {
   type HotelItem,
   formatHotelPrice,
 } from "@/lib/hotel-data";
+import HeaderTop from "@/components/HeaderTop";
 
 function HotelStars({ count }: { count: number }) {
   return (
@@ -194,6 +195,7 @@ export default function HotelLandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+       <HeaderTop />
       <MainHeader />
 
       <main>

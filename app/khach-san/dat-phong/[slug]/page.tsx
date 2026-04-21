@@ -12,6 +12,7 @@ import {
   formatHotelPrice,
   type HotelItem as BaseHotelItem,
 } from "@/lib/hotel-data";
+import HeaderTop from "@/components/HeaderTop";
 
 type HotelRoom = {
   id: string;
@@ -174,6 +175,7 @@ export default function HotelBookingPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white">
+         <HeaderTop />
         <MainHeader />
         <div className="mx-auto max-w-[1180px] px-4 py-10 text-[18px] text-[#666]">
           Đang tải thông tin đặt phòng...

@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import MainHeader from "@/components/MainHeader";
 import Footer from "@/components/Footer";
 import { getVisaPosts, type VisaPostItem } from "@/lib/visa-data";
+import HeaderTop from "@/components/HeaderTop";
 
 function normalizeText(value: string) {
   return value
@@ -80,6 +81,7 @@ function VisaSearchContent() {
 
   return (
     <div className="min-h-screen bg-white text-[#222]">
+      <HeaderTop />
       <MainHeader />
 
       <main className="mx-auto max-w-[1180px] px-4 py-8">
