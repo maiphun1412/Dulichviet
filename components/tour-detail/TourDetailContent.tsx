@@ -63,6 +63,7 @@ export default function TourDetailContent({ tour }: Props) {
   ];
 
   const toggleDetail = (id: number) => {
+    console.log("CLICK DETAIL ID:", id);
     setOpenDetailId((prev) => (prev === id ? null : id));
   };
 
@@ -142,7 +143,9 @@ export default function TourDetailContent({ tour }: Props) {
 
                 <div className="mb-3 grid grid-cols-[100px_1fr] gap-4 text-[15px] leading-[1.6]">
                   <div className="font-bold text-[#444]">Lịch trình</div>
-                  <div className="font-semibold text-[#555]">{tour.duration}</div>
+                  <div className="font-semibold text-[#555]">
+                    {tour.duration}
+                  </div>
                 </div>
 
                 <div className="mb-3 grid grid-cols-[100px_1fr] gap-4 text-[15px] leading-[1.6]">
@@ -153,7 +156,9 @@ export default function TourDetailContent({ tour }: Props) {
                 </div>
 
                 <p className="mt-4 text-[15px] italic leading-[1.65] text-[#303030]">
-                  <span className="font-bold text-[#175fa9]">{tour.title}. </span>
+                  <span className="font-bold text-[#175fa9]">
+                    {tour.title}.{" "}
+                  </span>
                   {tour.overviewText}
                 </p>
 
@@ -302,176 +307,200 @@ export default function TourDetailContent({ tour }: Props) {
                   </thead>
 
                   <tbody>
-                    {departures.map((item, idx) => (
-                      <Fragment key={`${item.id}-${idx}`}>
-                        <tr className="border-b border-[#ececec] text-[14px] text-[#333]">
-                          <td className="px-2 py-4">{idx + 1}</td>
-                          <td className="px-2 py-4">{item.date}</td>
-                          <td className="px-2 py-4">{item.airline}</td>
-                          <td className="px-2 py-4 font-bold">{item.price}</td>
-                          <td className="px-2 py-4">{item.seats}</td>
-                          <td className="px-2 py-4">
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (item.status === "Book") {
-                                    router.push(`/tour/${tour.slug}/dat-tour`);
-                                  }
-                                }}
-                                className="rounded-[6px] bg-[#ef1486] px-3 py-2 text-[14px] font-medium text-white"
-                              >
-                                {item.status}
-                              </button>
+                    {departures.map((item, idx) => {
+                      const detail = item.detail || {};
 
-                              <button
-  type="button"
-  onClick={() => toggleDetail(item.id)}
-  className={`rounded-[6px] px-3 py-2 text-[14px] font-medium transition ${
-    openDetailId === item.id
-      ? "bg-[#ef1486] text-white"
-      : "border border-[#ef1486] text-[#ef1486]"
-  }`}
->
-  Chi tiết
-</button>
-                            </div>
-                          </td>
-                        </tr>
+                      return (
+                        <Fragment key={`${item.id}-${idx}`}>
+                          <tr className="border-b border-[#ececec] text-[14px] text-[#333]">
+                            <td className="px-2 py-4">{idx + 1}</td>
+                            <td className="px-2 py-4">{item.date}</td>
+                            <td className="px-2 py-4">{item.airline}</td>
+                            <td className="px-2 py-4 font-bold">{item.price}</td>
+                            <td className="px-2 py-4">{item.seats}</td>
+                            <td className="px-2 py-4">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (item.status === "Book") {
+                                      router.push(`/tour/${tour.slug}/dat-tour`);
+                                    }
+                                  }}
+                                  className="rounded-[6px] bg-[#ef1486] px-3 py-2 text-[14px] font-medium text-white"
+                                >
+                                  {item.status}
+                                </button>
 
-                       {openDetailId === item.id && (
-  <tr>
-    <td colSpan={6} className="px-0 py-0">
-      <div className="mb-4 mt-2 border border-[#ef3b78] bg-white">
-        <div className="flex items-center justify-between border-b border-[#d8d8d8] px-3 py-2 text-[13px] font-bold text-[#111]">
-          <div className="flex items-center gap-2">
-            <span className="text-[14px] text-[#111]">⌂</span>
-            <span>
-              Bảng chi tiết giá tour ({item.airline}) {item.date}
-            </span>
-          </div>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleDetail(item.id)}
+                                  className={`rounded-[6px] px-3 py-2 text-[14px] font-medium transition ${
+                                    openDetailId === item.id
+                                      ? "bg-[#ef1486] text-white"
+                                      : "border border-[#ef1486] text-[#ef1486]"
+                                  }`}
+                                >
+                                  Chi tiết
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
 
-          <button
-            type="button"
-            onClick={() => setOpenDetailId(null)}
-            className="text-[24px] leading-none text-[#d40000] hover:opacity-80"
-          >
-            X
-          </button>
-        </div>
+                          {openDetailId === item.id && (
+                            <tr>
+                              <td colSpan={6} className="px-0 py-0">
+                                <div className="mb-4 mt-2 border border-[#ef3b78] bg-white">
+                                  <div className="flex items-center justify-between border-b border-[#d8d8d8] px-3 py-2 text-[13px] font-bold text-[#111]">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[14px] text-[#111]">
+                                        ⌂
+                                      </span>
+                                      <span>
+                                        Bảng chi tiết giá tour ({item.airline}){" "}
+                                        {item.date}
+                                      </span>
+                                    </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-center text-[13px] text-[#222]">
-            <thead>
-              <tr className="bg-[#f3f3f3] font-bold">
-                <th className="border border-[#cfcfcf] px-3 py-2 text-right">
-                  Loại giá\Độ tuổi
-                </th>
-                <th className="border border-[#cfcfcf] px-3 py-2">
-                  Người lớn(Trẻ 11 tuổi)
-                </th>
-                <th className="border border-[#cfcfcf] px-3 py-2">
-                  Trẻ em(5 - 11 tuổi)
-                </th>
-                <th className="border border-[#cfcfcf] px-3 py-2">
-                  Trẻ nhỏ(2 - 5 tuổi)
-                </th>
-                <th className="border border-[#cfcfcf] px-3 py-2">
-                  Sơ sinh(nhỏ hơn 2 tuổi)
-                </th>
-              </tr>
-            </thead>
+                                    <button
+                                      type="button"
+                                      onClick={() => setOpenDetailId(null)}
+                                      className="text-[24px] leading-none text-[#d40000] hover:opacity-80"
+                                    >
+                                      X
+                                    </button>
+                                  </div>
 
-            <tbody>
-              <tr>
-                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
-                  Giá
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.adult || ""}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.child || ""}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.smallChild || ""}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.infant || ""}
-                </td>
-              </tr>
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full border-collapse text-center text-[13px] text-[#222]">
+                                      <thead>
+                                        <tr className="bg-[#f3f3f3] font-bold">
+                                          <th className="border border-[#cfcfcf] px-3 py-2 text-right">
+                                            Loại giá\Độ tuổi
+                                          </th>
+                                          <th className="border border-[#cfcfcf] px-3 py-2">
+                                            Người lớn(Trẻ 11 tuổi)
+                                          </th>
+                                          <th className="border border-[#cfcfcf] px-3 py-2">
+                                            Trẻ em(5 - 11 tuổi)
+                                          </th>
+                                          <th className="border border-[#cfcfcf] px-3 py-2">
+                                            Trẻ nhỏ(2 - 5 tuổi)
+                                          </th>
+                                          <th className="border border-[#cfcfcf] px-3 py-2">
+                                            Sơ sinh(nhỏ hơn 2 tuổi)
+                                          </th>
+                                        </tr>
+                                      </thead>
 
-              <tr>
-                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
-                  Phụ thu Nước Ngoài
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.foreignSurcharge || "0đ"}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-              </tr>
+                                      <tbody>
+                                        <tr>
+                                          <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                                            Giá
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.adult || ""}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.child || ""}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.smallChild || ""}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.infant || ""}
+                                          </td>
+                                        </tr>
 
-              <tr>
-                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
-                  Phụ thu Việt Kiều
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.vietKieuSurcharge || "0đ"}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
-              </tr>
+                                        <tr>
+                                          <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                                            Phụ thu Nước Ngoài
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.foreignSurcharge || "0đ"}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                        </tr>
 
-              <tr>
-                <td className="border border-[#cfcfcf] px-3 py-2 font-bold text-right">
-                  Phụ thu Phòng đơn
-                </td>
-                <td colSpan={4} className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.singleRoomSurcharge || "0đ"}
-                </td>
-              </tr>
+                                        <tr>
+                                          <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                                            Phụ thu Việt Kiều
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.vietKieuSurcharge || "0đ"}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            0đ
+                                          </td>
+                                        </tr>
 
-              <tr>
-                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
-                  Giảm giá
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.discount || "0đ"}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.discount || "0đ"}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.discount || "0đ"}
-                </td>
-                <td className="border border-[#cfcfcf] px-3 py-2">
-                  {item.detail?.discount || "0đ"}
-                </td>
-              </tr>
+                                        <tr>
+                                          <td className="border border-[#cfcfcf] px-3 py-2 font-bold text-right">
+                                            Phụ thu Phòng đơn
+                                          </td>
+                                          <td
+                                            colSpan={4}
+                                            className="border border-[#cfcfcf] px-3 py-2"
+                                          >
+                                            {detail.singleRoomSurcharge || "0đ"}
+                                          </td>
+                                        </tr>
 
-              <tr>
-                <td
-                  colSpan={5}
-                  className="border border-[#cfcfcf] px-3 py-2 text-left"
-                >
-                  <div className="mb-2 font-bold text-[13px]">⌂ Ghi chú</div>
-                  <div className="whitespace-pre-line leading-[1.6] text-[#222]">
-                    {item.detail?.note || ""}
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </td>
-  </tr>
-)}
-                      </Fragment>
-                    ))}
+                                        <tr>
+                                          <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                                            Giảm giá
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.discount || "0đ"}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.discount || "0đ"}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.discount || "0đ"}
+                                          </td>
+                                          <td className="border border-[#cfcfcf] px-3 py-2">
+                                            {detail.discount || "0đ"}
+                                          </td>
+                                        </tr>
+
+                                        <tr>
+                                          <td
+                                            colSpan={5}
+                                            className="border border-[#cfcfcf] px-3 py-2 text-left"
+                                          >
+                                            <div className="mb-2 font-bold text-[13px]">
+                                              ⌂ Ghi chú
+                                            </div>
+                                            <div className="whitespace-pre-line leading-[1.6] text-[#222]">
+                                              {detail.note || ""}
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
