@@ -325,145 +325,151 @@ export default function TourDetailContent({ tour }: Props) {
                               </button>
 
                               <button
-                                type="button"
-                                onClick={() => toggleDetail(item.id)}
-                                className="rounded-[6px] border border-[#ef1486] px-3 py-2 text-[14px] font-medium text-[#ef1486]"
-                              >
-                                Chi tiết
-                              </button>
+  type="button"
+  onClick={() => toggleDetail(item.id)}
+  className={`rounded-[6px] px-3 py-2 text-[14px] font-medium transition ${
+    openDetailId === item.id
+      ? "bg-[#ef1486] text-white"
+      : "border border-[#ef1486] text-[#ef1486]"
+  }`}
+>
+  Chi tiết
+</button>
                             </div>
                           </td>
                         </tr>
 
-                        {openDetailId === item.id && item.detail && (
-                          <tr>
-                            <td colSpan={6} className="px-0 py-0">
-                              <div className="mb-4 mt-1 border border-[#ef1486] bg-white">
-                                <div className="flex items-center justify-between border-b border-[#dcdcdc] px-3 py-2 text-[14px] font-bold text-[#111]">
-                                  <span>
-                                    Bảng chi tiết giá tour ({item.airline}) {item.date}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => setOpenDetailId(null)}
-                                    className="text-[20px] font-bold leading-none text-[#d30000]"
-                                  >
-                                    x
-                                  </button>
-                                </div>
+                       {openDetailId === item.id && (
+  <tr>
+    <td colSpan={6} className="px-0 py-0">
+      <div className="mb-4 mt-2 border border-[#ef3b78] bg-white">
+        <div className="flex items-center justify-between border-b border-[#d8d8d8] px-3 py-2 text-[13px] font-bold text-[#111]">
+          <div className="flex items-center gap-2">
+            <span className="text-[14px] text-[#111]">⌂</span>
+            <span>
+              Bảng chi tiết giá tour ({item.airline}) {item.date}
+            </span>
+          </div>
 
-                                <div className="overflow-x-auto">
-                                  <table className="w-full border-collapse text-center text-[14px]">
-                                    <thead>
-                                      <tr className="bg-[#f5f5f5] font-bold text-[#222]">
-                                        <th className="border border-[#d5d5d5] px-3 py-2">
-                                          Loại giá\Độ tuổi
-                                        </th>
-                                        <th className="border border-[#d5d5d5] px-3 py-2">
-                                          Người lớn
-                                        </th>
-                                        <th className="border border-[#d5d5d5] px-3 py-2">
-                                          Trẻ em
-                                        </th>
-                                        <th className="border border-[#d5d5d5] px-3 py-2">
-                                          Trẻ nhỏ
-                                        </th>
-                                        <th className="border border-[#d5d5d5] px-3 py-2">
-                                          Sơ sinh
-                                        </th>
-                                      </tr>
-                                    </thead>
+          <button
+            type="button"
+            onClick={() => setOpenDetailId(null)}
+            className="text-[24px] leading-none text-[#d40000] hover:opacity-80"
+          >
+            X
+          </button>
+        </div>
 
-                                    <tbody>
-                                      <tr>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">Giá</td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.adult || ""}</td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.child || ""}</td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.smallChild || ""}</td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">{item.detail.infant || ""}</td>
-                                      </tr>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-center text-[13px] text-[#222]">
+            <thead>
+              <tr className="bg-[#f3f3f3] font-bold">
+                <th className="border border-[#cfcfcf] px-3 py-2 text-right">
+                  Loại giá\Độ tuổi
+                </th>
+                <th className="border border-[#cfcfcf] px-3 py-2">
+                  Người lớn(Trẻ 11 tuổi)
+                </th>
+                <th className="border border-[#cfcfcf] px-3 py-2">
+                  Trẻ em(5 - 11 tuổi)
+                </th>
+                <th className="border border-[#cfcfcf] px-3 py-2">
+                  Trẻ nhỏ(2 - 5 tuổi)
+                </th>
+                <th className="border border-[#cfcfcf] px-3 py-2">
+                  Sơ sinh(nhỏ hơn 2 tuổi)
+                </th>
+              </tr>
+            </thead>
 
-                                      <tr>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          Phụ thu Nước Ngoài
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.foreignSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.foreignSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.foreignSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.foreignSurcharge || "0đ"}
-                                        </td>
-                                      </tr>
+            <tbody>
+              <tr>
+                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                  Giá
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.adult || ""}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.child || ""}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.smallChild || ""}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.infant || ""}
+                </td>
+              </tr>
 
-                                      <tr>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          Phụ thu Việt Kiều
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.vietKieuSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.vietKieuSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.vietKieuSurcharge || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.vietKieuSurcharge || "0đ"}
-                                        </td>
-                                      </tr>
+              <tr>
+                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                  Phụ thu Nước Ngoài
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.foreignSurcharge || "0đ"}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+              </tr>
 
-                                      <tr>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          Phụ thu Phòng đơn
-                                        </td>
-                                        <td
-                                          colSpan={4}
-                                          className="border border-[#d5d5d5] px-3 py-2"
-                                        >
-                                          {item.detail.singleRoomSurcharge || "0đ"}
-                                        </td>
-                                      </tr>
+              <tr>
+                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                  Phụ thu Việt Kiều
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.vietKieuSurcharge || "0đ"}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+                <td className="border border-[#cfcfcf] px-3 py-2">0đ</td>
+              </tr>
 
-                                      <tr>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          Giảm giá
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.discount || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.discount || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.discount || "0đ"}
-                                        </td>
-                                        <td className="border border-[#d5d5d5] px-3 py-2">
-                                          {item.detail.discount || "0đ"}
-                                        </td>
-                                      </tr>
+              <tr>
+                <td className="border border-[#cfcfcf] px-3 py-2 font-bold text-right">
+                  Phụ thu Phòng đơn
+                </td>
+                <td colSpan={4} className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.singleRoomSurcharge || "0đ"}
+                </td>
+              </tr>
 
-                                      <tr>
-                                        <td
-                                          colSpan={5}
-                                          className="border border-[#d5d5d5] px-3 py-2 text-left font-semibold"
-                                        >
-                                          Ghi chú: {item.detail.note || ""}
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
+              <tr>
+                <td className="border border-[#cfcfcf] px-3 py-2 text-right">
+                  Giảm giá
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.discount || "0đ"}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.discount || "0đ"}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.discount || "0đ"}
+                </td>
+                <td className="border border-[#cfcfcf] px-3 py-2">
+                  {item.detail?.discount || "0đ"}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  colSpan={5}
+                  className="border border-[#cfcfcf] px-3 py-2 text-left"
+                >
+                  <div className="mb-2 font-bold text-[13px]">⌂ Ghi chú</div>
+                  <div className="whitespace-pre-line leading-[1.6] text-[#222]">
+                    {item.detail?.note || ""}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </td>
+  </tr>
+)}
                       </Fragment>
                     ))}
                   </tbody>
