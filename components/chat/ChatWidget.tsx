@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatPopup from "./chat/ChatPopup";
+import ChatPopup from "./ChatPopup";
 import { ensureChatSession } from "@/lib/chat-service";
 
-export default function FloatingContact() {
+export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [sessionId, setSessionId] = useState("");
 
@@ -23,7 +23,8 @@ export default function FloatingContact() {
 
   return (
     <>
-      <div className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-3">
+      <div className="fixed bottom-6 right-4 z-[998] flex flex-col items-end gap-3">
+        {/* BOX CHAT */}
         <div className="rounded-2xl border border-[#e5e7eb] bg-white px-4 py-3 shadow-xl">
           <div className="mb-2 flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[#f3c6db]">
@@ -42,12 +43,12 @@ export default function FloatingContact() {
             </div>
           </div>
 
-          <div className="text-[14px] text-[#444]">
-            Gửi cho bạn một tin nhắn
-          </div>
+          <div className="text-[14px] text-[#444]">Gửi cho bạn một tin nhắn</div>
         </div>
 
+        {/* KHUNG HỒNG */}
         <div className="relative flex flex-col items-center gap-2 rounded-2xl bg-gradient-to-b from-[#ef1a9a] to-[#b3126d] px-4 py-5 shadow-xl">
+          {/* ICON CHAT */}
           <button
             type="button"
             onClick={() => setIsOpen(true)}
@@ -64,6 +65,7 @@ export default function FloatingContact() {
             </span>
           </button>
 
+          {/* ZALO */}
           <a
             href="https://zalo.me/2849615761982580160"
             target="_blank"

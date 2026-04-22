@@ -16,61 +16,92 @@ const navItems = [
   { label: "TIN TỨC", href: "/tin-tuc" },
 ];
 
+const buildTourHref = (keyword: string) =>
+  `/tour-theo-menu?keyword=${encodeURIComponent(keyword)}`;
+
 const tourGroups = [
   {
     title: "Du lịch trong nước",
-    items: ["Du lịch Miền Bắc", "Du lịch Miền Trung", "Du lịch Miền Nam"],
+    items: [
+      { label: "Du lịch Miền Bắc", href: buildTourHref("Miền Bắc") },
+      { label: "Du lịch Miền Trung", href: buildTourHref("Miền Trung") },
+      { label: "Du lịch Miền Nam", href: buildTourHref("Miền Nam") },
+    ],
   },
   {
     title: "Du lịch nước ngoài",
-    items: ["Tour Châu Á", "Tour Châu Âu", "Tour Úc - Mỹ"],
+    items: [
+      { label: "Tour Châu Á", href: buildTourHref("Châu Á") },
+      { label: "Tour Châu Âu", href: buildTourHref("Châu Âu") },
+      { label: "Tour Úc - Mỹ", href: buildTourHref("Úc") },
+    ],
   },
   {
     title: "Du lịch khách đoàn",
-    items: ["Tour doanh nghiệp", "Team Building", "Gala Dinner"],
+    items: [
+      { label: "Tour doanh nghiệp", href: "/tour-doanh-nghiep" },
+      { label: "Team Building", href: buildTourHref("Team Building") },
+      { label: "Gala Dinner", href: buildTourHref("Gala Dinner") },
+    ],
   },
   {
     title: "Du lịch tự chọn",
-    items: ["Tour Free & Easy", "Combo du lịch", "Vé tham quan"],
+    items: [
+      { label: "Tour Free & Easy", href: buildTourHref("Free & Easy") },
+      { label: "Combo du lịch", href: buildTourHref("Combo") },
+      { label: "Vé tham quan", href: buildTourHref("Vé tham quan") },
+    ],
   },
   {
     title: "Du lịch hành hương",
-    items: ["Hành hương trong nước", "Hành hương nước ngoài"],
+    items: [
+      { label: "Hành hương trong nước", href: "/du-lich-hanh-huong" },
+      { label: "Hành hương nước ngoài", href: buildTourHref("Hành Hương") },
+    ],
   },
 ];
 
 const northTours = [
-  "Du lịch Hà Nội",
-  "Du lịch Bắc Kạn",
-  "Du lịch Bắc Ninh",
-  "Du lịch Đông Bắc",
-  "Du lịch Điện Biên",
-  "Du lịch Hạ Long",
-  "Du lịch Hà Giang",
-  "Du lịch Lai Châu",
-  "Du lịch Lạng Sơn",
-  "Du lịch Mộc Châu",
-  "Du lịch Mai Châu",
-  "Du lịch Thanh Hóa",
-  "Du lịch Ninh Bình",
-  "Du lịch Phú Thọ",
-  "Du lịch Sapa",
-  "Du lịch Tây Bắc",
+  { label: "Du lịch Hà Nội", href: buildTourHref("Hà Nội") },
+  { label: "Du lịch Bắc Kạn", href: buildTourHref("Bắc Kạn") },
+  { label: "Du lịch Bắc Ninh", href: buildTourHref("Bắc Ninh") },
+  { label: "Du lịch Đông Bắc", href: buildTourHref("Đông Bắc") },
+  { label: "Du lịch Điện Biên", href: buildTourHref("Điện Biên") },
+  { label: "Du lịch Hạ Long", href: buildTourHref("Hạ Long") },
+  { label: "Du lịch Hà Giang", href: buildTourHref("Hà Giang") },
+  { label: "Du lịch Lai Châu", href: buildTourHref("Lai Châu") },
+  { label: "Du lịch Lạng Sơn", href: buildTourHref("Lạng Sơn") },
+  { label: "Du lịch Mộc Châu", href: buildTourHref("Mộc Châu") },
+  { label: "Du lịch Mai Châu", href: buildTourHref("Mai Châu") },
+  { label: "Du lịch Thanh Hóa", href: buildTourHref("Thanh Hóa") },
+  { label: "Du lịch Ninh Bình", href: buildTourHref("Ninh Bình") },
+  { label: "Du lịch Phú Thọ", href: buildTourHref("Phú Thọ") },
+  { label: "Du lịch Sapa", href: buildTourHref("Sapa") },
+  { label: "Du lịch Tây Bắc", href: buildTourHref("Tây Bắc") },
 ];
 
 const holidayTours = [
-  "Tour lễ 2/9",
-  "Tour du lịch mùa Thu",
-  "Tour du lịch mùa lúa chín",
-  "Tour du lịch mùa hoa Tam Giác Mạch",
-  "Tour bay Vietnam Airlines",
-  "Tour khám phá mùa hoa",
-  "Tour du lịch Hành Hương",
-  "Tour Noel - Tết Dương Lịch",
-  "Tour du lịch Tết Nguyên Đán",
-  "Tour du lịch lễ 30/4 - 1/5",
-  "Tour pháo hoa Đà Nẵng",
-  "Tour Xe Giá Sốc",
+  { label: "Tour lễ 2/9", href: buildTourHref("lễ 2/9") },
+  { label: "Tour du lịch mùa Thu", href: buildTourHref("mùa Thu") },
+  { label: "Tour du lịch mùa lúa chín", href: buildTourHref("mùa lúa chín") },
+  { label: "Tour du lịch mùa hoa Tam Giác Mạch", href: buildTourHref("Tam Giác Mạch") },
+  { label: "Tour bay Vietnam Airlines", href: buildTourHref("Vietnam Airlines") },
+  { label: "Tour khám phá mùa hoa", href: buildTourHref("mùa hoa") },
+  { label: "Tour du lịch Hành Hương", href: "/du-lich-hanh-huong" },
+  { label: "Tour Noel - Tết Dương Lịch", href: buildTourHref("Noel") },
+  { label: "Tour du lịch Tết Nguyên Đán", href: buildTourHref("Tết Nguyên Đán") },
+  { label: "Tour du lịch lễ 30/4 - 1/5", href: "/tour-le-30-4" },
+  { label: "Tour pháo hoa Đà Nẵng", href: buildTourHref("pháo hoa Đà Nẵng") },
+  { label: "Tour Xe Giá Sốc", href: buildTourHref("Giá Sốc") },
+];
+
+const featuredTours = [
+  { label: "Du lịch Phú Quốc", href: buildTourHref("Phú Quốc") },
+  { label: "Du lịch Đà Lạt", href: buildTourHref("Đà Lạt") },
+  { label: "Du lịch Đà Nẵng", href: buildTourHref("Đà Nẵng") },
+  { label: "Du lịch Nha Trang", href: buildTourHref("Nha Trang") },
+  { label: "Du lịch Côn Đảo", href: buildTourHref("Côn Đảo") },
+  { label: "Du lịch Miền Tây", href: buildTourHref("Miền Tây") },
 ];
 
 const quickMenuLinks = [
@@ -81,7 +112,6 @@ const quickMenuLinks = [
   { label: "Tour mới lạ", href: "/tour-he-2026" },
   { label: "Tổng quan Cty", href: "/tong-quan" },
   { label: "Thông tin liên hệ", href: "/lien-he" },
-  
   { label: "Tuyển dụng Du Lịch", href: "/tin-tuc" },
   { label: "Giới thiệu", href: "/tong-quan" },
 ];
@@ -204,12 +234,13 @@ export default function MainHeader() {
                                   </div>
                                   <div className="space-y-2">
                                     {northTours.map((item) => (
-                                      <div
-                                        key={item}
-                                        className="text-[14px] text-[#4d4d4d]"
+                                      <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        className="block text-[14px] text-[#4d4d4d] transition hover:text-[#f0178d]"
                                       >
-                                        {item}
-                                      </div>
+                                        {item.label}
+                                      </Link>
                                     ))}
                                   </div>
                                 </div>
@@ -220,12 +251,13 @@ export default function MainHeader() {
                                   </div>
                                   <div className="space-y-2">
                                     {holidayTours.map((item) => (
-                                      <div
-                                        key={item}
-                                        className="text-[14px] text-[#4d4d4d]"
+                                      <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        className="block text-[14px] text-[#4d4d4d] transition hover:text-[#f0178d]"
                                       >
-                                        {item}
-                                      </div>
+                                        {item.label}
+                                      </Link>
                                     ))}
                                   </div>
                                 </div>
@@ -234,13 +266,16 @@ export default function MainHeader() {
                                   <div className="mb-3 text-[15px] font-bold text-[#f0178d]">
                                     Nổi bật
                                   </div>
-                                  <div className="space-y-2 text-[14px] text-[#4d4d4d]">
-                                    <div>Du lịch Phú Quốc</div>
-                                    <div>Du lịch Đà Lạt</div>
-                                    <div>Du lịch Đà Nẵng</div>
-                                    <div>Du lịch Nha Trang</div>
-                                    <div>Du lịch Côn Đảo</div>
-                                    <div>Du lịch Miền Tây</div>
+                                  <div className="space-y-2">
+                                    {featuredTours.map((item) => (
+                                      <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        className="block text-[14px] text-[#4d4d4d] transition hover:text-[#f0178d]"
+                                      >
+                                        {item.label}
+                                      </Link>
+                                    ))}
                                   </div>
                                 </div>
                               </div>
@@ -251,12 +286,13 @@ export default function MainHeader() {
                                 {tourGroups
                                   .find((group) => group.title === activeGroup)
                                   ?.items.map((item) => (
-                                    <div
-                                      key={item}
-                                      className="rounded-[6px] border border-[#efefef] px-4 py-3 text-[14px] text-[#4d4d4d]"
+                                    <Link
+                                      key={item.label}
+                                      href={item.href}
+                                      className="rounded-[6px] border border-[#efefef] px-4 py-3 text-[14px] text-[#4d4d4d] transition hover:border-[#f7c4df] hover:text-[#f0178d]"
                                     >
-                                      {item}
-                                    </div>
+                                      {item.label}
+                                    </Link>
                                   ))}
                               </div>
                             )}

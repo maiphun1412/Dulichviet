@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
@@ -19,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body>{children}
+        <ChatWidget />
+      </body>
     </html>
   );
 }
