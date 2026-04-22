@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -28,7 +28,7 @@ function parseTourDate(dateStr: string) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export default function TourTheoMenuPage() {
+function TourTheoMenuContent() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword")?.trim() || "";
 
@@ -142,5 +142,13 @@ export default function TourTheoMenuPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function TourTheoMenuPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f3f3f3]" />}>
+      <TourTheoMenuContent />
+    </Suspense>
   );
 }
